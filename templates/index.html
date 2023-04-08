@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        * {
+        margin: 0px;
+        padding: 0px;
+        }
+        body {
+        color: black;
+        background: white;
+        user-select:none;
+        }
+        #atributos {
+        position: relative;
+        width: 100%;
+        text-align: center;
+        font-size: clamp(5vh, 7vh, 12vh);
+        top: -7vh;
+        }
+        #roda_atb {
+        position: absolute;
+        height: 50vh;
+        width: 50vh;
+        margin-left: auto;
+        margin-right: auto;
+        top: clamp(5vh, 7vh, 12vh);
+        left: 0px;
+        right: 0px;
+        }
+        #atributos_texto {
+        }
+        #agi {
+        position: relative;
+        display: inline;
+        top: 9.25vh;
+        }
+        #for {
+        position: relative;
+        display: inline;
+        top: 19.75vh;
+        left: -4.75vh;
+        }
+        #int {
+        position: relative;
+        display: inline;
+        top: 19.75vh;
+        right: -4.75vh;
+        }
+        #pre {
+        position: relative;
+        display: inline;
+        top: 38.5vh;
+        left: -5.5vh;
+        }
+        #vig {
+        position: relative;
+        display: inline;
+        top: 38.5vh;
+        right: -5.5vh;
+        }
+        #pontos_estatisticos {
+        font-family: Andale Mono, monospace;
+        font-size: 40px;
+        }
+        #informacoes {
+        font-family: Andale Mono, monospace;
+        font-size: 40px;
+        }
+        h1 {
+        font-family: Andale Mono, monospace;
+        text-align: center;
+        font-size: clamp(5vh, 7vh, 12vh);
+        }
+        #informacoes {
+        position: relative;
+        width: 100%;
+        text-align: center;
+        font-size: clamp(3.52vh, 5.17vh, 8.8vh);
+        top: 45vh;
+        }
+        #nex {
+        margin-right: 5px;
+        }
+        #defesa {
+        margin-left: 5px;
+        }
+        #pontos_estatisticos {
+        font-weight: bold;
+        position: relative;
+        text-align: center;
+        top: 45vh;
+        font-size: clamp(3.2vh, 4.7vh, 8vh);
+        }
+        .input_pte {
+        width: clamp(3.2vh, 6.1vh, 9vh);
+        height: clamp(3.2vh, 6.1vh, 9vh);
+        background: white;
+        font-size: clamp(3.2vh, 4.7vh, 8vh);
+        margin-bottom: 5px;
+        }
+        #btn_pte {
+        position: relative;
+        width: clamp(12.8vh, 24.4vh, 36vh);
+        height: clamp(3.2vh, 6.1vh, 9vh);
+        background: white;
+        text-align: center;
+        font-size: clamp(3.2vh, 4.7vh, 8vh);
+        font-family: andale mono, monospace;
+        font-weight: 900;
+        }
+        ::-webkit-input-placeholder  {
+        font-size: clamp(1.6vh, 2.35vh, 4vh);
+        font-family: courier new, monospace;
+        letter-spacing: clamp(0.5px, 0.65px, 0.8px);
+        }
+        #rituais {
+        position: relative;
+        text-align: center;
+        top: 50vh;
+        font-size: clamp(2.4vh, 3.525vh, 6vh);
+        font-family: courier new, monospace;
+        font-weight: 900;
+        }
+        #poderes {
+        position: relative;
+        text-align: center;
+        top: 50vh;
+        font-size: clamp(2.4vh, 3.525vh, 6vh);
+        font-family: courier new, monospace;
+        font-weight: 900;
+        }
+        #pericias {
+        position: relative;
+        text-align: center;
+        top: 50vh;
+        font-size: clamp(2.4vh, 3.525vh, 6vh);
+        font-family: courier new, monospace;
+        font-weight: 900;
+        }
+
+    </style>
+    <meta charset="UTF-8">
+    <title>início</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Ficha {{ nome }}</h1>
+    <div id="atributos">
+        <div id="atributos_texto">
+            <div id="for">9</div>
+            <div id="pre">1</div>
+            <div id="agi">3</div>
+            <div id="vig">5</div>
+            <div id="int">1</div>
+        </div>
+
+    </div>
+
+    <img draggable="false" id="roda_atb" src="{{ url_for('static', filename='ATRIVUTOS.png') }}">
+
+    <div id="informacoes">
+        <b id="nex">Nex: 5%</b>
+        <b id="defesa">Defesa: 15</b>
+    </div>
+    <br>
+    <br>
+    <div id="engloba_pte">
+        <div id="pontos_estatisticos">
+        <div id="pv">
+            <label id="pv_val">PV: 237/237</label>
+            <input maxlength="2" type="text" placeholder="Dano" id="dano_pv" class="input_pte">
+        </div>
+        <div id="pe">
+            <label id="pe_val">PE: 100/100</label>
+            <input maxlength="2" type="text" placeholder="Dano" id="dano_pe" class="input_pte">
+        </div>
+        <div id="san">
+            <label id="sn_val">SN: 251/251</label>
+            <input maxlength="2" type="text" placeholder="Dano" id="dano_sn" class="input_pte">
+        </div>
+            <button id="btn_pte">subtrair</button>
+        </div>
+    </div>
+
+    <div id="rituais">Rituais: nada</div>
+    <br>
+    <div id="poderes">Poderes: nada</div>
+    <br>
+    <div id="pericias">Perícias: nada</div>
+    <script>
+    var agi = $("#agi")
+    var forca = $("#for")
+    var int = $("#int")
+    var pre = $("#pre")
+    var vig = $("#vig")
+    var nex = $("#nex")
+    var defesa = $("#defesa")
+    var pv = $("#pv_val")
+    var pe = $("#pe_val")
+    var sn = $("#sn_val")
+    var personagem = $("h1").text().replace("Ficha ", "").toLowerCase()
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $.ajax({
+                url: `https://apiordemparanormal.onrender.com/api_retorna_dados/${personagem}`,
+                type: "GET",
+                success: function(result) {
+                    var r_agi = result["atributos"]["agi"]
+                    var r_forca = result["atributos"]["for"]
+                    var r_int = result["atributos"]["int"]
+                    var r_pre = result["atributos"]["pre"]
+                    var r_vig = result["atributos"]["vig"]
+                    var r_nex = result["atributos"]["nex"]
+                    var r_defesa = result["defesa"]
+                    var r_pv_atual = result['pv']['atual'].toString()
+                    var r_pe_atual = result['pe']['atual'].toString()
+                    var r_sn_atual = result['sn']['atual'].toString()
+                    var r_pv_max = result['pv']['maximo'].toString()
+                    var r_pe_max = result['pe']['maximo'].toString()
+                    var r_sn_max = result['sn']['maximo'].toString()
+
+                    var numero_de_casas_numericas_dos_pte = {}
+                    var dict_listas_pte = {"atuais": [r_pv_atual, r_pe_atual, r_sn_atual], "maximos": [r_pv_max, r_pe_max, r_sn_max]}
+
+                    for (var index = 0; index < 2; index++) {
+                      var list_val_len_pte = []
+
+                      if (index == 0) {
+                      var indent_lista = "atuais"
+                      }
+                      else {
+                        var indent_lista = "maximos"
+                      }
+
+                      numero_de_casas_numericas_dos_pte[indent_lista] = Math.max(...dict_listas_pte[indent_lista]).toString().split("").length
+
+                      }
+
+                    var r_pv_atual_formatado = r_pv_atual
+                    var r_pe_atual_formatado = r_pe_atual
+                    var r_sn_atual_formatado = r_sn_atual
+
+                    var r_pv_maximos_formatado = r_pv_max
+                    var r_pe_maximos_formatado = r_pe_max
+                    var r_sn_maximos_formatado = r_sn_max
+
+                    for (var i = 0; i < numero_de_casas_numericas_dos_pte["atuais"]; i++) {
+                      if (r_pv_atual_formatado.length < numero_de_casas_numericas_dos_pte["atuais"]) {
+                      var r_pv_atual_formatado = "0"+r_pv_atual_formatado
+                      }
+                      if (r_pe_atual_formatado.length < numero_de_casas_numericas_dos_pte["atuais"]) {
+                      var r_pe_atual_formatado = "0"+r_pe_atual_formatado
+                      }
+                      if (r_sn_atual_formatado.length < numero_de_casas_numericas_dos_pte["atuais"]) {
+                      var r_sn_atual_formatado = "0"+r_sn_atual_formatado
+                      }
+                    }
+
+                    for (var i = 0; i < numero_de_casas_numericas_dos_pte["maximos"]; i++) {
+                      if (r_pv_maximos_formatado.length < numero_de_casas_numericas_dos_pte["maximos"]) {
+                        var r_pv_maximos_formatado = "0"+r_pv_maximos_formatado
+                      }
+                      if (r_pe_maximos_formatado.length < numero_de_casas_numericas_dos_pte["maximos"]) {
+                      var r_pe_maximos_formatado = "0"+r_pe_maximos_formatado
+                      }
+                      if (r_sn_maximos_formatado.length < numero_de_casas_numericas_dos_pte["maximos"]) {
+                      var r_sn_maximos_formatado = "0"+r_sn_maximos_formatado
+                      }
+                    }
+
+                    agi.text(r_agi)
+                    forca.text(r_forca)
+                    int.text(r_int)
+                    pre.text(r_pre)
+                    vig.text(r_vig)
+                    nex.text(r_nex)
+                    defesa.text(`Defesa: ${r_defesa}`)
+                    pv.text(`PV: ${r_pv_maximos_formatado}/${r_pv_atual_formatado}`)
+                    pe.text(`PE: ${r_pe_maximos_formatado}/${r_pe_atual_formatado}`)
+                    sn.text(`SN: ${r_sn_maximos_formatado}/${r_sn_atual_formatado}`)
+                    }
+        })
+        })
+
+
+    $("#btn_pte").click( function() {
+        var personagem = $("h1").text().replace("Ficha ", "").toLowerCase()
+        var pvDiminuir = $("#dano_pv").val()
+        var peDiminuir = $("#dano_pe").val()
+        var snDiminuir = $("#dano_sn").val()
+
+        if (pvDiminuir == "") {
+            pvDiminuir = 0
+        }
+        if (peDiminuir == "") {
+            peDiminuir = 0
+        }
+        if (snDiminuir == "") {
+            snDiminuir = 0
+        }
+
+        pvDiminuir = parseInt(pvDiminuir)
+        peDiminuir = parseInt(peDiminuir)
+        snDiminuir = parseInt(snDiminuir)
+
+        dados = {"personagem": personagem,"pv": pvDiminuir,"pe": peDiminuir,"sn": snDiminuir}
+        console.log(dados)
+
+        $.ajax({
+            url: "https://apiordemparanormal.onrender.com/api_valor_pte",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(dados),
+            error: function(e) {
+            console.log(e)
+            }
+                }).done(function(data) {
+
+                var respPv = data["pv"].toString()
+                var respPe = data["pe"].toString()
+                var respSn = data["sn"].toString()
+
+                var listaLenPte = [respPv.length, respPe.length, respSn.length]
+                var maiorLen = Math.max(...listaLenPte)
+
+
+
+                for (var i = 0; i < maiorLen; i++) {
+                    if (respPv.length < maiorLen) {
+                    respPv = "0"+respPv
+                    }
+                    if (respPe.length < maiorLen) {
+                    respPe = "0"+respPe
+                    }
+                    if (respSn.length < maiorLen) {
+                    respSn = "0"+respSn
+                    }
+                    }
+
+                pv.text(`${pv.text().split("/")[0]}/${respPv}`)
+                pe.text(`${pe.text().split("/")[0]}/${respPe}`)
+                sn.text(`${sn.text().split("/")[0]}/${respSn}`)
+
+                $("#dano_pv").val("")
+                $("#dano_pe").val("")
+                $("#dano_sn").val("")
+                })
+
+            })
+
+
+    </script>
+</body>
+</html>
+
+
