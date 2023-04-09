@@ -140,6 +140,90 @@
         font-family: courier new, monospace;
         font-weight: 900;
         }
+        #escurecer_tela {
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          margin: 0px;
+          padding: 0px;
+          width: 100vw;
+          height: 100vh;
+          background: #00008b;
+          visibility: visible;
+          opacity: 30%;
+          z-index: 8;
+        }
+        #bloco_carregador_de_tela {
+          position: absolute;
+          height: clamp(4vw, 9vw, 14.4vw);
+          width: 70vw;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          background: linear-gradient(45deg, #3B3FF7, #3BA3F7 90%);
+          border-radius: 100px;
+          z-index: 9;
+          visibility: visible;
+        }
+
+        #texto {
+          color: white;
+          font-size: clamp(3vw, 6vw, 9vw);
+          text-align: center;
+          font-family: andale mono, monospace;
+        }
+        .ponto {
+          display: inline;
+          padding: 0px;
+        }
+        #ponto_1 {
+          animation: desaparece1 1s linear infinite;
+        }
+        #ponto_2 {
+          animation: desaparece2 1s linear infinite;
+          opacity: 75%;
+        }
+        #ponto_3 {
+          animation: desaparece3 1s linear infinite;
+          opacity: 50%;
+        }
+
+        @keyframes desaparece1 {
+          100% {
+            opacity: 0%;
+          }
+        }
+        @keyframes desaparece2 {
+          0% {
+            opacity: 75%;
+          }
+          35% {
+            opacity: 100%;
+          }
+          36% {
+            opacity: 0%;
+          }
+          100% {
+            opacity: 65%;
+          }
+        }
+        @keyframes desaparece3 {
+          0% {
+            opacity: 50%;
+          }
+          60% {
+            opacity: 100%;
+          }
+          61% {
+            opacity: 0%;
+          }
+          100% {
+            opacity: 40%;
+          }
+
+        }
 
     </style>
     <meta charset="UTF-8">
@@ -147,6 +231,15 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 </head>
 <body>
+    <div id="bloco_carregador_de_tela">
+        <div id="texto">carregando
+            <div id="ponto_1" class="ponto">.</div>
+            <div id="ponto_2" class="ponto">.</div>
+            <div id="ponto_3" class="ponto">.</div>
+        </div>
+    </div>
+
+    <div id="escurecer_tela"></div>
     <h1>Ficha {{ nome }}</h1>
     <div id="atributos">
         <div id="atributos_texto">
@@ -207,6 +300,9 @@
     var personagem = $("h1").text().replace("Ficha ", "").toLowerCase()
 
     document.addEventListener("DOMContentLoaded", function() {
+        $("#escurecer_tela").css("visibility", "visible")
+        $("#bloco_carregador_de_tela").css("visibility", "visible")
+
         $.ajax({
                 url: `https://apiordemparanormal.onrender.com/api_retorna_dados/${personagem}`,
                 type: "GET",
@@ -284,6 +380,9 @@
                     pv.text(`PV: ${r_pv_maximos_formatado}/${r_pv_atual_formatado}`)
                     pe.text(`PE: ${r_pe_maximos_formatado}/${r_pe_atual_formatado}`)
                     sn.text(`SN: ${r_sn_maximos_formatado}/${r_sn_atual_formatado}`)
+
+                    $("#escurecer_tela").css("visibility", "hidden")
+                    $("#bloco_carregador_de_tela").css("visibility", "hidden")
                     }
         })
         })
@@ -319,7 +418,10 @@
     }
 
     $("#btn_pte_soma").click( function() {
-            setaVariaveisParaRequestPte("adicionar")
+        setaVariaveisParaRequestPte("adicionar")
+
+        $("#escurecer_tela").css("visibility", "visible")
+        $("#bloco_carregador_de_tela").css("visibility", "visible")
 
         $.ajax({
             url: "https://apiordemparanormal.onrender.com/api_valor_pte",
@@ -360,12 +462,18 @@
                 $("#dano_pv").val("")
                 $("#dano_pe").val("")
                 $("#dano_sn").val("")
+
+                $("#escurecer_tela").css("visibility", "hidden")
+                $("#bloco_carregador_de_tela").css("visibility", "hidden")
                 })
 
             })
     $("#btn_pte_subtrai").click( function() {
         setaVariaveisParaRequestPte("subtrair")
 
+        $("#escurecer_tela").css("visibility", "visible")
+        $("#bloco_carregador_de_tela").css("visibility", "visible")
+
         $.ajax({
             url: "https://apiordemparanormal.onrender.com/api_valor_pte",
             type: "POST",
@@ -405,6 +513,9 @@
                 $("#dano_pv").val("")
                 $("#dano_pe").val("")
                 $("#dano_sn").val("")
+
+                $("#escurecer_tela").css("visibility", "hidden")
+                $("#bloco_carregador_de_tela").css("visibility", "hidden")
                 })
 
             })
