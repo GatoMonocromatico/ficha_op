@@ -1,0 +1,559 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+  
+::-webkit-scrollbar {
+    width: 5px;
+}
+  
+::-webkit-scrollbar-track {
+    background: rgb(198, 198, 198);        /* color of the tracking area */
+    border-radius: 20px;
+}
+  
+::-webkit-scrollbar-thumb {
+    background-color: rgb(163, 163, 163);    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+}
+
+body {
+    color: black;
+    background: white;
+    user-select: none;
+    overflow-x: hidden;
+}
+
+button {
+    color: black;
+}
+
+#bloco1 {
+    width: 27vw;
+    margin-left: 0.5vw;
+}
+
+#atributos {
+    position: relative;
+    text-align: left;
+    font-size: 3.75vw;
+}
+
+#roda_atb {
+    position: relative;
+    height: 26vw;
+    margin: 0px;
+    padding: 0px;
+}
+
+#atributos_texto {
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+}
+
+#agi {
+    position: relative;
+    display: inline;
+    left: 6.5vw;
+    top: 1.75vw;
+}
+
+#for {
+    position: relative;
+    display: inline;
+    top: 7.25vw;
+    left: 4vw;
+}
+
+#int {
+    position: relative;
+    display: inline;
+    top: 7.25vw;
+    left: 9vw;
+}
+
+#pre {
+    position: relative;
+    display: inline;
+    top: 17vw;
+    left: 3.5vw;
+}
+
+#vig {
+    position: relative;
+    display: inline;
+    top: 17vw;
+    left: 9.5vw;
+}
+
+h1 {
+    font-family: Andale Mono, monospace;
+    text-align: center;
+    font-size: 2.625vw;
+    color: black;
+    margin-bottom: 1vw;
+}
+
+#informacoes {
+    position: relative;
+    text-align: center;
+    font-size: 2.205vw;
+    font-family: Andale Mono, monospace;
+    margin-top: 1vw;
+}
+
+#nex {
+    margin-right: 5px;
+}
+
+#defesa {
+    margin-left: 5px;
+}
+
+#pontos_estatisticos {
+    font-weight: bold;
+    position: relative;
+    font-size: 2.1vw;
+    font-family: Andale Mono, monospace;
+    margin-top: 2.625vw;
+}
+
+#pv {
+    margin-left: 5.25vw;
+}
+
+#pe {
+    padding-top: 0.7875vw;
+    margin-left: 5.25vw;
+}
+#san {
+    padding-top: 0.7875vw;
+    padding-bottom: 0.7875vw;
+    margin-left: 5.25vw;
+}
+
+.input_pte {
+    position: realtive;
+    width: 2.625vw;
+    height: 2.625vw;
+    background: white;
+    font-size: 1.8375vw;
+    resize: none;
+    text-align: center;
+    outline: none;
+    float: right;
+    padding: 0;
+    margin-right: 5.25vw;
+}
+
+::-webkit-input-placeholder {
+    font-size: 1.05vw;
+    font-family: courier new, monospace;
+}
+
+#btns_pte_div {
+    text-align: center;
+}
+
+.btn_pte {
+    position: relative;
+    width: 6.3vw;
+    height: 2.1vw;
+    background: white;
+    font-size: 1.575vw;
+    font-family: Andale Mono, monospace;
+    font-weight: 900;
+    margin-top: 0.2625vw;
+    margin-left: 0.525vw;
+    margin-right: 0.525vw;
+    padding: 0;
+}
+
+#bloco2 {
+    position: absolute;
+    left: 28vw;
+    font-family: Andale Mono, monospace;
+    top: 3.625vw;
+    width: 71vw;
+    display: flex;
+    flex-direction: row;
+    border-left: 1px solid black;
+}
+
+#secao_ppr {
+    display: flex;
+
+}
+
+.secoes_bloco2 {
+    width: 17.75vw;
+}
+
+.text_area {
+    resize: none;
+    outline: none;
+    text-align: center;
+    margin-top: 1vw;
+    overflow-x: hidden;
+}
+
+#pericias {
+    font-size: 3vw;
+    border-right: 1px solid black;
+    text-align: center;
+}
+
+#text_pericias {
+    width: 95%;
+    height: 84vh;
+    font-size: 2.55vh;
+    border: none;
+}
+
+#rituais {
+    font-size: 3vw;
+    border-right: 1px solid black;
+    text-align: center;
+}
+
+#text_rituais {
+    width: 95%;
+    height: 84vh;
+    font-size: 2.55vh;
+    border: none;
+}
+
+#poderes {
+    font-size: 3vw;
+    border-right: 1px solid black;
+    text-align: center;
+}
+
+#text_poderes {
+    width: 95%;
+    height: 84vh;
+    font-size: 2.55vh;
+    border: none;
+}
+
+#secao2_3 {
+    width: 35.5vw;
+    display: flex;
+    flex-direction: row;
+}
+
+#secao4 {
+    text-align: center;
+    font-size: 1.5vw;
+}
+
+#inventario {
+    text-align: center;
+    width: 100%;
+}
+
+#text_inventario {
+    width: 95%;
+    height: 38.5vh;
+    font-size: 1vw;
+    border: none;
+}
+
+#anotacoes {
+    border-bottom: 1px solid black;
+    width: 100%;
+}
+
+#text_anotacoes {
+    width: 95%;
+    height: 38.5vh;
+    font-size: 1vw;
+    text-align: left;
+}
+
+.btns_secao4 {
+    background: rgb(233, 233, 233);
+    font-family: Andale mono, monospace;
+    border: none;
+    height:  1.3vw;
+    font-size: 1.2vw;
+    float: right;
+    margin-top: 0.2vw;
+    margin-right: 2.5%;
+    text-align: left;
+    padding-left: 0.25vw;
+    padding-right: 0.25vw;
+}
+
+#label_inventario {
+    float: left;
+    margin-left: 2.5%;
+}
+
+#label_anotacoes {
+    float: left;
+    margin-left: 2.5%;
+}
+
+#escurecer_tela {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    background: #00008b;
+    visibility: hidden;
+    opacity: 30%;
+    z-index: 1;
+}
+
+#bloco_carregador_de_tela {
+    position: fixed;
+    height: clamp(4vw, 9vw, 14.4vw);
+    width: 70vw;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background: linear-gradient(45deg, #3B3FF7, #3BA3F7 90%);
+    border-radius: 100px;
+    z-index: 2;
+    visibility: hidden;
+}
+
+#texto {
+    color: white;
+    font-size: clamp(3vw, 6vw, 9vw);
+    text-align: center;
+    font-family: andale mono, monospace;
+}
+
+.ponto {
+    display: inline;
+    padding: 0px;
+}
+
+#ponto_1 {
+    animation: desaparece1 1s linear infinite;
+}
+
+#ponto_2 {
+    animation: desaparece2 1s linear infinite;
+    opacity: 75%;
+}
+
+#ponto_3 {
+    animation: desaparece3 1s linear infinite;
+    opacity: 50%;
+}
+
+@keyframes desaparece1 {
+    100% {
+        opacity: 0%;
+    }
+}
+
+@keyframes desaparece2 {
+    0% {
+        opacity: 75%;
+    }
+
+    35% {
+        opacity: 100%;
+    }
+
+    36% {
+        opacity: 0%;
+    }
+
+    100% {
+        opacity: 65%;
+    }
+}
+
+@keyframes desaparece3 {
+    0% {
+        opacity: 50%;
+    }
+
+    60% {
+        opacity: 100%;
+    }
+
+    61% {
+        opacity: 0%;
+    }
+
+    100% {
+        opacity: 40%;
+    }
+
+}
+
+@media screen and (max-width: 1279px) {
+    #bloco1 {
+        width: 50vw;
+        height: 84vw;
+        border-right: 1px solid black;
+    }
+
+    #roda_atb {
+        height: 49vw;
+    }
+    
+    #atributos {
+        font-size: 7.07vw;
+    }
+
+    #agi {
+        position: relative;
+        display: inline;
+        left: 12.25vw;
+        top: 3.3vw;
+    }
+    
+    #for {
+        position: relative;
+        display: inline;
+        top: 13.7vw;
+        left: 7.5vw;
+    }
+    
+    #int {
+        position: relative;
+        display: inline;
+        top: 13.7vw;
+        left: 17vw;
+    }
+    
+    #pre {
+        position: relative;
+        display: inline;
+        top: 32.04vw;
+        left: 6.6vw;
+    }
+    
+    #vig {
+        position: relative;
+        display: inline;
+        top: 32.04vw;
+        left: 17.9vw;
+    }
+
+    #informacoes {
+        font-size: 4.5vw;
+    }
+
+    #pontos_estatisticos {
+        font-size: 5vw;
+    }
+
+    .input_pte {
+        height: 5.5vw;
+        width: 5.5vw;
+    }
+
+    .btn_pte {
+        width: 12vw;
+        height: 4vw;
+        font-size: 3.1vw;
+    }
+
+    #bloco2 {
+        position: relative;
+        left: 0;
+        width: 100%;
+        top: 1vw;
+        display: block;
+        border-top: 1px solid black;
+    }
+
+    ::-webkit-input-placeholder {
+        font-size: 2.2vw;
+    }
+
+    #secao_ppr {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #secao4 {
+        position: absolute;
+        display: block;
+        left: 50.5vw;
+        top: -85vw;
+        width: 48vw;
+        margin: 0;
+    }
+
+    #anotacoes {
+        font-size: 4vw;
+        width: 48vw;
+    }
+
+    #inventario {
+        font-size: 4vw;
+        width: 48vw;
+    }
+
+    #text_anotacoes {
+        height: 35.15vw;
+        font-size: 3vw;
+    }
+
+    #text_inventario {
+        height: 35.15vw;
+        font-size: 3vw;
+    }
+
+    .btns_secao4 {
+        margin-top: 1.2vw;
+        height: 3.1vw;
+        font-size: 3vw;
+    }
+
+    #pericias {
+        width: 33.333vw;
+        border: none;
+        font-size: 4vw;
+        border-right: 1px solid black;
+    }
+
+    #text_pericias {
+        font-size: 3.4vw;
+        height: 50vh;
+    }
+
+    #secao2_3 {
+        width: 66.665vw;
+    }
+
+    #poderes {
+        width: 33.333vw;
+        border: none;
+        font-size: 4vw;
+    }
+
+    #text_poderes {
+        font-size: 3.4vw;
+        height: 50vh;
+    }
+
+    #rituais {
+        width: 33.333vw;
+        border: none;
+        font-size: 4vw;
+        border-right: 1px solid black;
+    }
+
+    #text_rituais {
+        font-size: 3.4vw;
+        height: 50vh;
+    }
+
+}
+    
