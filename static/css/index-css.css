@@ -556,4 +556,30 @@ h1 {
     }
 
 }
-    
+
+@media screen and (max-width: 600px) {
+    #bloco1 {
+        width: 50vw;
+        height: 88vw;
+        border-right: 1px solid black;
+    }
+
+    #secao4 {
+        position: absolute;
+        display: block;
+        left: 50.5vw;
+        top: -89vw;
+        width: 48vw;
+        margin: 0;
+    }
+
+    #text_anotacoes {
+        height: 37.15vw;
+        font-size: 3vw;
+    }
+
+    #text_inventario {
+        height: 37.15vw;
+        font-size: 3vw;
+    }
+}    
