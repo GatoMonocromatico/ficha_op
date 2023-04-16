@@ -216,9 +216,9 @@ document.addEventListener("DOMContentLoaded", function () {
             vig.text(r_vig)
             nex.text(`Nex: ${r_nex}`)
             defesa.text(`Defesa: ${r_defesa}`)
-            pv.text(`PV: ${r_pv_maximos_formatado}/${r_pv_atual_formatado}`)
-            pe.text(`PE: ${r_pe_maximos_formatado}/${r_pe_atual_formatado}`)
-            sn.text(`SN: ${r_sn_maximos_formatado}/${r_sn_atual_formatado}`)
+            pv.text(`PV: ${r_pv_atual_formatado}/${r_pv_maximos_formatado}`)
+            pe.text(`PE: ${r_pe_atual_formatado}/${r_pe_maximos_formatado}`)
+            sn.text(`SN: ${r_sn_atual_formatado}/${r_sn_maximos_formatado}`)
             
             for (linha_pericias_text in lista_pericias) {
                 linha_pericias_text = lista_pericias[linha_pericias_text]
@@ -297,9 +297,9 @@ $("#btn_pte_soma").click(function () {
             }
         }
 
-        pv.text(`${pv.text().split("/")[0]}/${respPv}`)
-        pe.text(`${pe.text().split("/")[0]}/${respPe}`)
-        sn.text(`${sn.text().split("/")[0]}/${respSn}`)
+        pv.text(`PV: ${respPv}/${pv.text().split("/")[1]}`)
+        pe.text(`PE: ${respPe}/${pe.text().split("/")[1]}`)
+        sn.text(`SN: ${respSn}/${sn.text().split("/")[1]}`)
 
         $("#dano_pv").val("")
         $("#dano_pe").val("")
@@ -348,9 +348,9 @@ $("#btn_pte_subtrai").click(function () {
             }
         }
 
-        pv.text(`${pv.text().split("/")[0]}/${respPv}`)
-        pe.text(`${pe.text().split("/")[0]}/${respPe}`)
-        sn.text(`${sn.text().split("/")[0]}/${respSn}`)
+        pv.text(`PV: ${respPv}/${pv.text().split("/")[1]}`)
+        pe.text(`PE: ${respPe}/${pe.text().split("/")[1]}`)
+        sn.text(`SN: ${respSn}/${sn.text().split("/")[1]}`)
 
         $("#dano_pv").val("")
         $("#dano_pe").val("")
