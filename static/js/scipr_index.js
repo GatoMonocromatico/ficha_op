@@ -8,6 +8,9 @@ const defesa = $("#defesa")
 const pv = $("#pv_val")
 const pe = $("#pe_val")
 const sn = $("#sn_val")
+const pv_modificar = $("#dano_pv")
+const pe_modificar = $("#dano_pe")
+const sn_modificar = $("#dano_sn")
 const personagem = $("h1").text().replace("Ficha ", "").toLowerCase()
 const pericias = $("#text_pericias")
 const rituais = $("#text_rituais")
@@ -19,9 +22,9 @@ var peModificar = 0
 var snModificar = 0
 
 function setaVariaveisParaRequestPte(acao) {
-    var pvModificar = pv.val()
-    var peModificar = pe.val()
-    var snModificar = sn.val()
+    var pvModificar = pv_modificar.val()
+    var peModificar = pe_modificar.val()
+    var snModificar = sn_modificar.val()
 
     if (pvModificar == "") {
         pvModificar = 0
