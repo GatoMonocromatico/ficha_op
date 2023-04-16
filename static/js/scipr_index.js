@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#bloco_carregador_de_tela").css("visibility", "visible")
 
     $.ajax({
-        url: `https://apiordemparanormal.onrender.com/api_retorna_dados/${personagem}`,
+        url: `https://apiordemparanormal.onrender.com/receber/${personagem}`,
         type: "GET",
         success: function (result) {
             console.log("carregou")
@@ -263,7 +263,7 @@ $("#btn_pte_soma").click(function () {
     $("#bloco_carregador_de_tela").css("visibility", "visible")
 
     $.ajax({
-        url: "https://apiordemparanormal.onrender.com/api_valor_pte",
+        url: "https://apiordemparanormal.onrender.com/alterar/pte",
         type: "POST",
         dataType: "json",
         contentType: "application/json",
@@ -314,7 +314,7 @@ $("#btn_pte_subtrai").click(function () {
     $("#bloco_carregador_de_tela").css("visibility", "visible")
 
     $.ajax({
-        url: "https://apiordemparanormal.onrender.com/api_valor_pte",
+        url: "https://apiordemparanormal.onrender.com/alterar/pte",
         type: "POST",
         dataType: "json",
         contentType: "application/json",
@@ -369,7 +369,7 @@ $("#btn_anotacoes").click(function() {
     console.log(dados)
 
     $.ajax({
-        url: "https://apiordemparanormal.onrender.com/salvar_anotacoes",
+        url: "https://apiordemparanormal.onrender.com/alterar/anotacoes",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(dados),
@@ -389,7 +389,7 @@ $("#btn_atualiza_inv").click(function() {
     $("#bloco_carregador_de_tela").css("visibility", "visible")
 
     $.ajax({
-        url: `https://apiordemparanormal.onrender.com/api_retorna_dados/${personagem}`,
+        url: `https://apiordemparanormal.onrender.com/receber/${personagem}`,
         type: "GET",
         success: function (result) {
             let r_inv = result["inventario"]
