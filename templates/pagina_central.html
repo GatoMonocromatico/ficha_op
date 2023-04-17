@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagina_central_css.css') }}">
+    <script src="{{ url_for('static', filename='js/script_página_central.js') }}" defer></script>
+</head>
+</head>
+<body>
+
+    <h1>Insira o nome do seu personagem:</h1>
+
+    <form action="{{ url_for('index') }}" method="post">
+
+        <div id="div_input">
+            <label id="resultado_nome">{{ erro }}</label>
+            <input id="inp" placeholder="Nome" name="input"><button id="btn">enviar</button>
+        </div>
+    </form>
+
+</body>
+</html>

@@ -462,6 +462,7 @@ h1 {
         width: 12vw;
         height: 4vw;
         font-size: 3.1vw;
+        border: 1px solid black;
     }
 
     #bloco2 {
