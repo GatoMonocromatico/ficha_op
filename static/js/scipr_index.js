@@ -55,9 +55,10 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#bloco_carregador_de_tela").css("visibility", "visible")
 
     $.ajax({
-        url: `https://apiordemparanormal.onrender.com/receber/${personagem}`,
+        url: `https://apiordemparanormal.onrender.com/receber-formatado/${personagem}`,
         type: "GET",
         success: function (result) {
+            console.log("sucesso")
             console.log("carregou")
             let r_agi = result["atributos"]["agi"]
             let r_forca = result["atributos"]["for"]

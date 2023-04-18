@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect
 import requests
+import re
 
 app = Flask(__name__)
 
@@ -13,11 +14,19 @@ def index():
             requisicao = requests.get(f"{bd}/.json")
             personagens = requisicao.json()
 
-            if nome in personagens:
-                return redirect(url_for('ficha', input=nome))
+            padrao = re.compile(r"[a-zA-Z]")
+
+            nome_formatado = nome
+
+            for letra in nome:
+                if not padrao.search(letra):
+                    nome_formatado = nome_formatado.replace(letra, "")
+
+            if nome_formatado in personagens:
+                return redirect(url_for('ficha', input=nome_formatado))
 
             else:
-                return render_template("pagina_central.html", erro="Personagem não existe.")
+                return render_template("pagina_central.html", erro=f'Personagem "{nome}" não existe.')
 
     return render_template("pagina_central.html", erro="")
 
