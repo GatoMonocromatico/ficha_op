@@ -1,0 +1,135 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.container {
+    position: relative;
+    display: block;
+    font-size: 2vw;
+    margin: 1vw 0 0 1vw;
+    width: 68%;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0.4vw;
+    left: 0;
+    background-color: #eee;
+    border-radius: 50%;
+    width: 2vw;
+    height: 2vw;
+}
+
+.inp_check {
+    width: 2vw;
+    height: 2vw;
+    opacity: 0;
+}
+
+.container input ~ .checkmark:hover {
+    background-color: #ccc;
+}
+
+.container input:checked ~ .checkmark {
+    background-color: red;
+}
+
+.container .checkmark:after {
+    content : "";
+    position : absolute;
+    display: none;
+    left: 0.7vw;
+    top: 0.3vw;
+    width: 0.4vw;
+    height: 0.8vw;
+    border: solid white;
+    border-width: 0 0.3vw 0.3vw 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+#form {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    top: 0;
+    left: 70vw;
+    height: 100vh;
+    border-left: 1px solid black;
+}
+
+#inp {
+    width: 50%;
+    font-size: 4vw;
+    margin-bottom: 1vw;
+    border-radius: 4vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    text-align: center;
+    outline: none;
+}
+
+#btn {
+    font-size: 3vw;
+    border-radius: 3vw;
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
+}
+
+::-webkit-input-placeholder {
+    font-size: 2.4vw;
+}
+
+#carregando {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border: 5px solid rgb(233, 233, 233);
+    border-top: 5px solid rgb(204, 204, 204);
+    border-radius: 50%;
+    animation: roda 1s linear infinite;
+    z-index: 3;
+    visibility: hidden;
+}
+
+#carregamento_fundo {
+    top: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(41, 19, 79);
+    opacity: 2%;
+    z-index: 2;
+    visibility: hidden;
+}
+
+.span_status {
+    display: inline-block;
+    height: 0.6vw;
+    width: 0.6vw;
+    margin-left: 0.3vw;
+    border-bottom: 0.2vw solid white;
+    border-radius: 50%;
+}
+
+@keyframes roda {
+    100% {
+        transform: rotate(360deg);
+    }
+}

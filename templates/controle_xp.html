@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SECRETO</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/controle_xp_css.css') }}">
+    <script defer src="{{ url_for('static', filename='js/script_controle_xp.js') }}"></script>
+</head>
+<body>
+    <div id="carregamento_fundo"></div>
+    <div id="carregando"></div>
+
+    <form action="{{ url_for('controle_xp') }}" method="post">
+        <div id="div_personagens">
+            <label class="container">
+                <input type="checkbox" class="inp_check" value="repetir" name="repetir">
+                <span class="checkmark"></span>
+                    <label> REPETIR</label>
+            </label>
+        </div>
+        <div id="form">
+            <input id="inp" placeholder="VD inimigo" name="vd" type="number" required>
+            <button id="btn" type="submit">upar</button>
+        </div>
+    </form>
+</body>
+</html>
