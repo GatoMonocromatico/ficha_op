@@ -26,27 +26,7 @@ function setaVariaveisParaRequestPte(acao) {
     var peModificar = pe_modificar.val()
     var snModificar = sn_modificar.val()
 
-    if (pvModificar == "") {
-        pvModificar = 0
-    }
-    if (peModificar == "") {
-        peModificar = 0
-    }
-    if (snModificar == "") {
-        snModificar = 0
-    }
-
-    pvModificar = parseInt(pvModificar)
-    peModificar = parseInt(peModificar)
-    snModificar = parseInt(snModificar)
-
-    if (acao != "subtrair") {
-        pvModificar = pvModificar * -1
-        peModificar = peModificar * -1
-        snModificar = snModificar * -1
-    }
-
-    dados = { "personagem": personagem, "pv": pvModificar, "pe": peModificar, "sn": snModificar }
+    dados = { "personagem": personagem, "pv": pvModificar, "pe": peModificar, "sn": snModificar, "ação": acao}
     console.log(dados)
 }
 
