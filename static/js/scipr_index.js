@@ -57,10 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let r_poderes = result["poderes"]
             let r_inventario = result["inventario"]
             let r_anotacoes = result["anotações"]
-            let r_trilha = result["trilha"]
-            let r_afinidade = result["afinidade"]
-            let r_origem = result["origem"]
-            let r_classe = result["classe"]
+            let r_infos = result["infos"]
 
             agi.text(r_agi)
             forca.text(r_forca)
@@ -75,8 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             pericias.text(r_pericias)
             anotacoes.text(r_anotacoes)
             inventario.text(r_inventario)
-
-            infos.text(`Afinidade\n${r_afinidade}\n\nClasse\n${r_classe}\n\nOrigem\n${r_origem}\n\nTrilha\n${r_trilha}`)
+            infos.text(r_infos)
             
             poderes.text("")
             if (r_rituais != "Nenhum") {

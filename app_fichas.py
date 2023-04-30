@@ -18,9 +18,9 @@ def index():
             requisicao = requests.get(f"{bd}/.json")
             personagens = requisicao.json()
 
-            padrao = re.compile(r"[a-zA-Z]")
+            padrao = re.compile(r"[a-z]")
 
-            nome_formatado = nome
+            nome_formatado = nome.lower()
 
             for letra in nome:
                 if not padrao.search(letra):
