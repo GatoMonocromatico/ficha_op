@@ -602,7 +602,6 @@ h1 {
         top: -85vw;
         width: 48vw;
         margin: 0;
-        background-color: red;
     }
 
     #anotacoes {
@@ -669,7 +668,6 @@ h1 {
         width: 100vw;
         border-left: none;
         border-top: 1px solid black;
-        background-color: red;
     }
 
     #inventario {
