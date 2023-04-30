@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, url_for, redirect
 import requests
 import re
 from manipulador_personagens import Personagem
-import time
+# import time
 
 app = Flask(__name__)
 
@@ -81,23 +81,25 @@ def controle_xp():
 
                 requests.patch(f"{bd}/personagens/{nome}/.json", data=json.dumps(dados))
 
-        requisicao_nomes = requests.get(f"{bd}/nomes/.json")
-        nomes = [nome for nome in requisicao_nomes.json()]
+            requisicao_nomes = requests.get(f"{bd}/nomes/.json")
+            nomes = [nome for nome in requisicao_nomes.json()]
 
-        for nome in nomes:
-            personagem = Personagem(nome)
+            for nome in nomes:
+                personagem = Personagem(nome)
 
-            if personagem.verifica_upou_de_nivel():
-                upar = {f"{nome}": True}
+                if personagem.verifica_upou_de_nivel():
+                    upar = {f"{nome}": True}
+                    requests.patch(f"{bd}/nomes/.json", data=json.dumps(upar))
+                else:
+                    upar = {f"{nome}": False}
                 requests.patch(f"{bd}/nomes/.json", data=json.dumps(upar))
-            else:
-                upar = {f"{nome}": False}
-                requests.patch(f"{bd}/nomes/.json", data=json.dumps(upar))
 
-        return render_template("controle_xp.html")
+            return render_template("controle_xp.html", status="Ok!")
+        else:
+            return render_template("controle_xp.html", status="ERRO - Não selecionou nenhum personagem!")
 
     if not request.form:
-        return render_template("controle_xp.html")
+        return render_template("controle_xp.html", status="Ok!")
 
 
 if __name__ == "__main__":

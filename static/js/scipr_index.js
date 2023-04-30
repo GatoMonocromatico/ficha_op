@@ -17,9 +17,13 @@ const rituais = $("#text_rituais")
 const poderes = $("#text_poderes")
 const inventario = $("#text_inventario")
 const anotacoes = $("#text_anotacoes")
+const infos = $("#text_infos")
+const divDesc = $("#text_desc")
 var pvModificar = 0
 var peModificar = 0
 var snModificar = 0
+var nomeRituais = []
+var nomePoderes = []
 
 function setaVariaveisParaRequestPte(acao) {
     var pvModificar = pv_modificar.val()
@@ -38,8 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
         url: `https://apiordemparanormal.onrender.com/receber-formatado/${personagem}`,
         type: "GET",
         success: function (result) {
-            console.log("sucesso")
-            console.log("carregou")
             let r_agi = result["atributos"]["agi"]
             let r_forca = result["atributos"]["for"]
             let r_int = result["atributos"]["int"]
@@ -54,7 +56,11 @@ document.addEventListener("DOMContentLoaded", function () {
             let r_rituais = result["rituais"]
             let r_poderes = result["poderes"]
             let r_inventario = result["inventario"]
-            let r_anotacoes = result["anotações"]  
+            let r_anotacoes = result["anotações"]
+            let r_trilha = result["trilha"]
+            let r_afinidade = result["afinidade"]
+            let r_origem = result["origem"]
+            let r_classe = result["classe"]
 
             agi.text(r_agi)
             forca.text(r_forca)
@@ -67,10 +73,88 @@ document.addEventListener("DOMContentLoaded", function () {
             pe.text(r_pe)
             sn.text(r_sn)
             pericias.text(r_pericias)
-            rituais.text(r_rituais)
-            poderes.text(r_poderes)
             anotacoes.text(r_anotacoes)
             inventario.text(r_inventario)
+
+            infos.text(`Afinidade\n${r_afinidade}\n\nClasse\n${r_classe}\n\nOrigem\n${r_origem}\n\nTrilha\n${r_trilha}`)
+            
+            poderes.text("")
+            if (r_rituais != "Nenhum") {
+                rituais.text("")
+
+                for (let ritual in r_rituais){
+                    let id = ritual.replace(" ", "_")
+
+                    nomeRituais.push(id)
+
+                    let label = $(`<label id="${id}" class="label_habilidades">${r_rituais[ritual].replace("\n", "<br>")}</label>`)
+
+                    rituais.append(label)
+                    rituais.append($("<br>"))
+                    rituais.append($("<br>"))
+
+                    let elemento = document.getElementById(id)
+
+                    elemento.addEventListener("click", function() {
+                        $.ajax({
+                            url: "https://apiordemparanormal.onrender.com/receber/info",
+                            contentType: "application/json",
+                            type: "POST",
+                            data: JSON.stringify({"tipo": "rituais", "habilidade": id}),
+                            success: function(result) {
+                                if (result === "") {
+                                    resultado = "Não temos a descrição desta habilidade ainda"
+                                } else {
+                                    resultado = result
+                                }
+                                $("#descricao").css("visibility", "visible")
+                                divDesc.text(resultado)
+                            },
+                            error: function (e) {
+                                console.log(e)
+                                console.log(JSON.stringify({"tipo": "poderes", "habilidade": id}))
+                            }
+                        })
+                    })
+                }
+            }else {
+                rituais.text(r_rituais)
+            }
+            for (let poder in r_poderes){
+                let id = poder.replace(" ", "_")
+
+                nomePoderes.push(id)
+
+                let label = $(`<label id="${id}" class="label_habilidades">${r_poderes[poder].replace("\n", "<br>")}</label>`)
+
+                poderes.append(label)
+                poderes.append($("<br>"))
+                poderes.append($("<br>"))
+
+                let elemento = document.getElementById(id)
+
+                elemento.addEventListener("click", function() {
+                    $.ajax({
+                        url: "https://apiordemparanormal.onrender.com/receber/info",
+                        contentType: "application/json",
+                        type: "POST",
+                        data: JSON.stringify({"tipo": "poderes", "habilidade": id}),
+                        success: function(result) {
+                            if (result === "") {
+                                resultado = "Não temos a descrição desta habilidade ainda"
+                            } else {
+                                resultado = result
+                            }
+                            $("#descricao").css("visibility", "visible")
+                            divDesc.text(resultado)
+                        },
+                        error: function (e) {
+                            console.log(e)
+                            console.log(JSON.stringify({"tipo": "poderes", "habilidade": id}))
+                        }
+                    })
+                })
+            }
 
             $("#escurecer_tela").css("visibility", "hidden")
             $("#bloco_carregador_de_tela").css("visibility", "hidden")
@@ -102,9 +186,9 @@ $("#btn_pte_soma").click(function () {
             pe.text(r_pe)
             sn.text(r_sn)
 
-            $("#dano_pv").val("")
-            $("#dano_pe").val("")
-            $("#dano_sn").val("")
+            pv_modificar.val("")
+            pe_modificar.val("")
+            sn_modificar.val("")
 
             $("#escurecer_tela").css("visibility", "hidden")
             $("#bloco_carregador_de_tela").css("visibility", "hidden")
@@ -128,6 +212,8 @@ $("#btn_pte_subtrai").click(function () {
             console.log(e)
         },
         success: function (result) {
+            console.log(result)
+
             let r_pv = result['pv']
             let r_pe = result['pe']
             let r_sn = result['sn']
@@ -136,9 +222,9 @@ $("#btn_pte_subtrai").click(function () {
             pe.text(r_pe)
             sn.text(r_sn)
 
-            $("#dano_pv").val("")
-            $("#dano_pe").val("")
-            $("#dano_sn").val("")
+            pv_modificar.val("")
+            pe_modificar.val("")
+            sn_modificar.val("")
 
             $("#escurecer_tela").css("visibility", "hidden")
             $("#bloco_carregador_de_tela").css("visibility", "hidden")
@@ -196,4 +282,8 @@ $("#btn_atualiza_inv").click(function() {
             $("#bloco_carregador_de_tela").css("visibility", "hidden")
         }
     })
+})
+
+$("#xdesc").on("click", function() {
+    $("#descricao").css("visibility", "hidden")
 })

@@ -191,6 +191,10 @@ h1 {
     width: 17.75vw;
 }
 
+.label_habilidades:hover {
+    color: red;
+}
+
 .text_area {
     resize: none;
     outline: none;
@@ -199,76 +203,186 @@ h1 {
     overflow-x: hidden;
 }
 
+.insert_content {
+    text-align: center;
+    margin-top: 1vw;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#secao_anotacoes {
+    text-align: center;
+    font-size: 2vw;
+    display: flex;
+    border-right: 1px solid black;
+    flex-direction: column
+}
+
+#infos {
+    width: 100%;
+    height: 100%;
+    font-size: 2vw;
+    text-align: center;
+}
+
+#text_infos {
+    text-align: center;
+    width: 95%;
+    height: 39vh;
+    font-size: 2.55vh;
+    margin-bottom: 2px;
+    border: none;
+}
+
+#descricao {
+    visibility: hidden;
+    font-family: andale mono, 'Courier New', Courier, monospace;
+    font-weight: bold;
+    position: fixed;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60vh;
+    width: 60vw;
+    background-color: whitesmoke;
+    font-size: 3vh;
+    text-align: center;
+    z-index: 3;
+    border-radius: 10px;
+}
+
+#xdesc {
+    width: 2vw;
+    height: 2vw;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.line {
+  position: absolute;
+  width: 100%;
+  height: 15%;
+  background-color: rgb(244, 66, 12);
+  border-radius: 5px;
+}
+
+#xdesc:hover .line {
+    background-color: rgb(209, 52, 52);
+  }
+
+.line:first-child {
+  transform: rotate(45deg);
+  top: 45%;
+}
+
+.line:last-child {
+  transform: rotate(135deg);
+  top: 45%;
+}
+  
+#text_desc {
+    text-align: left;
+    width: 95%;
+    height: 50vh;
+    font-size: 3vh;
+    margin-bottom: 2px;
+    border: none;
+    padding: 1vw;
+}
+
+
 #pericias {
-    font-size: 3vw;
+    font-size: 2vw;
     border-right: 1px solid black;
     text-align: center;
 }
 
 #text_pericias {
     width: 95%;
-    height: 84vh;
-    font-size: 2.55vh;
+    height: 86vh;
+    font-size: 1.35vw;
     border: none;
 }
 
 #rituais {
-    font-size: 3vw;
-    border-right: 1px solid black;
     text-align: center;
+    width: 100%;
+    border-bottom: 1px solid black
 }
 
 #text_rituais {
     width: 95%;
-    height: 84vh;
-    font-size: 2.55vh;
+    height: 39vh;
+    font-size: 2vh;
     border: none;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 1vh;
 }
 
 #poderes {
-    font-size: 3vw;
-    border-right: 1px solid black;
+    font-size: 2vw;
     text-align: center;
 }
 
 #text_poderes {
     width: 95%;
-    height: 84vh;
-    font-size: 2.55vh;
+    height: 39vh;
+    font-size: 2vh;
+    margin-bottom: 2px;
     border: none;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;    
 }
 
-#secao2_3 {
-    width: 35.5vw;
+#secao2 {
+    width: 17.75vw;
+    text-align: center;
+    font-size: 2vw;
     display: flex;
-    flex-direction: row;
+    border-right: 1px solid black;
+    flex-direction: column
 }
 
 #secao4 {
     text-align: center;
-    font-size: 1.5vw;
+    font-size: 2vw;
+    display: flex;
+    border-right: 1px solid black;
+    flex-direction: column
 }
 
 #inventario {
     text-align: center;
     width: 100%;
+    border-bottom: 1px solid black;
 }
 
 #text_inventario {
     width: 95%;
-    height: 38.5vh;
-    font-size: 1vw;
+    height: 39vh;
+    font-size: 2vh;
     border: none;
 }
 
+#secao_anotacoes {
+    width: 17.75vw;
+}
+
 #anotacoes {
-    border-bottom: 1px solid black;
     width: 100%;
 }
 
 #text_anotacoes {
     width: 95%;
-    height: 38.5vh;
+    height: 86vh;
     font-size: 1vw;
     text-align: left;
 }
@@ -277,10 +391,9 @@ h1 {
     background: rgb(233, 233, 233);
     font-family: Andale mono, monospace;
     border: none;
-    height:  1.3vw;
+    height: 2vw;
     font-size: 1.2vw;
     float: right;
-    margin-top: 0.2vw;
     margin-right: 2.5%;
     text-align: left;
     padding-left: 0.25vw;
@@ -288,7 +401,6 @@ h1 {
 }
 
 #label_inventario {
-    float: left;
     margin-left: 2.5%;
 }
 
@@ -465,6 +577,10 @@ h1 {
         border: 1px solid black;
     }
 
+    ::-webkit-input-placeholder {
+        font-size: 2.2vw;
+    }
+
     #bloco2 {
         position: relative;
         left: 0;
@@ -474,42 +590,31 @@ h1 {
         border-top: 1px solid black;
     }
 
-    ::-webkit-input-placeholder {
-        font-size: 2.2vw;
-    }
-
     #secao_ppr {
         display: flex;
         flex-direction: row;
     }
 
-    #secao4 {
+    #secao_anotacoes {
         position: absolute;
         display: block;
         left: 50.5vw;
         top: -85vw;
         width: 48vw;
         margin: 0;
+        background-color: red;
     }
 
     #anotacoes {
         font-size: 4vw;
         width: 48vw;
-    }
-
-    #inventario {
-        font-size: 4vw;
-        width: 48vw;
+        height: 84vw;
     }
 
     #text_anotacoes {
         height: 35.15vw;
         font-size: 3vw;
-    }
-
-    #text_inventario {
-        height: 35.15vw;
-        font-size: 3vw;
+        height: 77vw;
     }
 
     .btns_secao4 {
@@ -530,7 +635,8 @@ h1 {
         height: 50vh;
     }
 
-    #secao2_3 {
+    #secao2 {
+        flex-direction: row;
         width: 66.665vw;
     }
 
@@ -557,35 +663,52 @@ h1 {
         height: 50vh;
     }
 
-}
+    #secao4 {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        border-left: none;
+        border-top: 1px solid black;
+        background-color: red;
+    }
 
-@media screen and (max-width: 600px) {
-    #bloco1 {
-        width: 50vw;
-        height: 88vw;
+    #inventario {
+        font-size: 4vw;
         border-right: 1px solid black;
     }
 
-    #secao4 {
-        position: absolute;
-        display: block;
-        left: 50.5vw;
-        top: -89vw;
-        width: 48vw;
-        margin: 0;
-    }
-
-    #text_anotacoes {
-        height: 37.15vw;
-        font-size: 3vw;
-    }
-
     #text_inventario {
-        height: 37.15vw;
-        font-size: 3vw;
+        font-size: 2.5vh;
+    }
+    #infos {
+        font-size: 4vw;
     }
 
+    #text_infos {
+        font-size: 2.5vh;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
     #text_pericias {
-        font-size: 2.8vw;
+        height: 35vh;
+        font-size: 3vw;
+    }
+    #text_rituais {
+        height: 35vh;
+        font-size: 3vw;
+    }
+    #text_poderes {
+        height: 35vh;
+        font-size: 3vw;
+    }
+    #text_inventario {
+        height: 18vh;
+        font-size: 3vw;
+    }
+    #text_infos {
+        height: 18vh;
+        font-size: 3vw;
     }
 }    

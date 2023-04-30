@@ -1,36 +1,39 @@
 import requests
 import json
 
+
 class Personagem:
-    def __init__(self, nome, novo=False):
+    def __init__(self, nome):
         self.nome = nome
-        self.novo = novo
-        self.vida_extra_calejado = 0
-        self.vida_extra_sangue_de_ferro = 0
-        self.vida_extra_sangue_de_ferro_afinidade = 0
-        self.vida_extra_casca_grossa = 0
-        self.pontos_de_esforco_extra_dedicacao = 0
-        self.pontos_de_esforco_extra_potencial_aprimorado = 0
-        self.pontos_de_esforco_extra_potencial_aprimorado_afinidade = 0
-        self.sanidade_extra_cicatrizes_psicologicas = 0
+        self.banco_dados = "https://op-database-728c3-default-rtdb.firebaseio.com"
+
+        requisicao = requests.get(f"{self.banco_dados}/nomes/{self.nome}/.json").json()
+
+        if requisicao is None:
+            self.novo = True
+        else:
+            self.novo = False
 
         self.pericias_lista = ("acrobacia", "adestramento", "artes", "atletismo", "atualidades",
-                             "ciências", "crime", "diplomacia", "enganação", "fortitude",
-                             "furtividade", "iniciativa", "intimidação", "intuição", "investigação",
-                             "luta", "medicina", "ocultismo", "percepção", "pilotagem",
-                             "pontaria", "profissão", "reflexos", "religião", "sobrevivência",
-                             "tática", "tecnologia", "vontade")
+                               "ciências", "crime", "diplomacia", "enganação", "fortitude",
+                               "furtividade", "iniciativa", "intimidação", "intuição", "investigação",
+                               "luta", "medicina", "ocultismo", "percepção", "pilotagem",
+                               "pontaria", "profissão", "reflexos", "religião", "sobrevivência",
+                               "tática", "tecnologia", "vontade")
 
-        if novo:
-            self.nivel_de_exposicao = 5
+        if self.novo:
+            self.nivel_de_exposicao = 0
             self.agilidade = 1
             self.forca = 1
             self.intelecto = 1
             self.presenca = 1
             self.vigor = 1
-            self.atributos = {"agilidade": self.agilidade, "força": self.forca, "intelecto": self.intelecto,
-                              "presença": self.presenca, "vigor": self.vigor}
-            self.cria_e_melhora_atributos(4, True, False)
+            self.atributos = {"agilidade": self.agilidade,
+                              "força": self.forca,
+                              "intelecto": self.intelecto,
+                              "presença": self.presenca,
+                              "vigor": self.vigor}
+            self.limite_de_rituais_para_aprender = self.intelecto
             self.classe = ""
             self.vida = 0
             self.pontos_de_esforco = 0
@@ -38,11 +41,10 @@ class Personagem:
             self.poderes = []
             self.afinidade = "nenhuma"
             self.origem = ""
-            self.vida_extra = 0
-            self.pontos_de_esforco_extra = 0
-            self.sanidade_extra = 0
+            self.pv_extra = 0
+            self.pe_extra = 0
+            self.sn_extra = 0
             self.pericias_treinadas = {}
-            self.limite_de_rituais_para_aprender = self.intelecto
             self.rituais = []
             self.trilha = ""
             self.numero_de_poderes_de_conhecimento_possuidos = 0
@@ -54,13 +56,14 @@ class Personagem:
             self.pode_aprender_rituais_de_terceiro_circulo = False
             self.pode_aprender_rituais_de_quarto_circulo = False
             self.nivel_de_treinamento_em_pericia_maximo = "treinado"
-            self.transcendeu = False
-            self.escolhe_origem()
-            self.recebe_beneficios_do_nivel_de_exposicao()
             self.xp = 0
+
+            self.cria_e_melhora_atributos(4, True, False)
+            self.atualiza_atributos()
+            self.escolhe_origem()
+            self.aumenta_nivel_de_exposicao()
         else:
-            banco_dados = f"https://op-database-728c3-default-rtdb.firebaseio.com/personagens/{self.nome}"
-            requisita_dados = requests.get(f"{banco_dados}/.json")
+            requisita_dados = requests.get(f"{self.banco_dados}/personagens/{self.nome}/.json")
             dados = requisita_dados.json()
 
             self.nivel_de_exposicao = dados["nex"]
@@ -69,30 +72,18 @@ class Personagem:
             self.intelecto = dados["atributos"]["int"]
             self.presenca = dados["atributos"]["pre"]
             self.vigor = dados["atributos"]["vig"]
-            self.atributos = {"agilidade": self.agilidade, "força": self.forca, "intelecto": self.intelecto,
-                              "presença": self.presenca, "vigor": self.vigor}
-
+            self.atributos = {"agilidade": self.agilidade,
+                              "força": self.forca,
+                              "intelecto": self.intelecto,
+                              "presença": self.presenca,
+                              "vigor": self.vigor}
+            self.limite_de_rituais_para_aprender = dados["limite_rituais"]
             self.classe = dados["classe"]
             self.vida = dados["pv"]["maximo"]
             self.pontos_de_esforco = dados["pe"]["maximo"]
             self.sanidade = dados["sn"]["maximo"]
             self.afinidade = dados["afinidade"]
             self.origem = dados["origem"]
-
-            if self.nivel_de_exposicao > 5:
-                self.vida_extra = 0
-            else:
-                self.vida_extra = 0
-
-            if self.nivel_de_exposicao > 5:
-                self.pontos_de_esforco_extra = 0
-            else:
-                self.pontos_de_esforco_extra = 0
-
-            if self.nivel_de_exposicao > 5:
-                self.sanidade_extra = 0
-            else:
-                self.sanidade_extra = 0
 
             self.pericias_treinadas = dados["pericias"]
 
@@ -110,30 +101,17 @@ class Personagem:
             for pericia in pericias_deletar:
                 del self.pericias_treinadas[pericia]
 
-            self.limite_de_rituais_para_aprender = self.intelecto
-
             self.rituais = [ritual for ritual in dados["rituais"]]
             self.poderes = [poder for poder in dados["poderes"]]
             for ritual in self.rituais:
                 self.poderes.append(f"{ritual} (círculo {dados['rituais'][ritual][0]})")
 
             self.trilha = dados["trilha"]
-            if "numero_de_poderes_de_conhecimento_possuidos" not in dados:
-                self.numero_de_poderes_de_conhecimento_possuidos = 0
-            else:
-                self.numero_de_poderes_de_conhecimento_possuidos = dados["numero_de_poderes_de_conhecimento_possuidos"]
-            if "numero_de_poderes_de_energia_possuidos" not in dados:
-                self.numero_de_poderes_de_energia_possuidos = 0
-            else:
-                self.numero_de_poderes_de_energia_possuidos = dados["numero_de_poderes_de_energia_possuidos"]
-            if "numero_de_poderes_de_morte_possuidos" not in dados:
-                self.numero_de_poderes_de_morte_possuidos = 0
-            else:
-                self.numero_de_poderes_de_morte_possuidos = dados["numero_de_poderes_de_morte_possuidos"]
-            if "numero_de_poderes_de_sangue_possuidos" not in dados:
-                self.numero_de_poderes_de_sangue_possuidos = 0
-            else:
-                self.numero_de_poderes_de_sangue_possuidos = dados["numero_de_poderes_de_sangue_possuidos"]
+
+            self.numero_de_poderes_de_conhecimento_possuidos = dados["numero_de_poderes_de_conhecimento_possuidos"]
+            self.numero_de_poderes_de_energia_possuidos = dados["numero_de_poderes_de_energia_possuidos"]
+            self.numero_de_poderes_de_morte_possuidos = dados["numero_de_poderes_de_morte_possuidos"]
+            self.numero_de_poderes_de_sangue_possuidos = dados["numero_de_poderes_de_sangue_possuidos"]
 
             self.xp = dados["xp"]
 
@@ -141,8 +119,20 @@ class Personagem:
             self.pode_aprender_rituais_de_segundo_circulo = False
             self.pode_aprender_rituais_de_terceiro_circulo = False
             self.pode_aprender_rituais_de_quarto_circulo = False
-            self.nivel_de_treinamento_em_pericia_maximo = "treinado"
-            self.transcendeu = False
+
+            self.pv_extra = 0
+            self.pe_extra = 0
+            self.sn_extra = 0
+            self.define_status_extra()
+
+            if self.nivel_de_exposicao >= 70:
+                self.nivel_de_treinamento_em_pericia_maximo = "expert"
+            elif self.nivel_de_exposicao >= 35:
+                self.nivel_de_treinamento_em_pericia_maximo = "veterano"
+            else:
+                self.nivel_de_treinamento_em_pericia_maximo = "treinado"
+
+        self.transcendeu = False
 
     def verifica_upou_de_nivel(self):
         if self.nivel_de_exposicao < 99:
@@ -160,9 +150,9 @@ class Personagem:
             return False
 
     @staticmethod
-    def retorna_valor_correto(numero_escolhido, lista_referente_ao_valor):
+    def retorna_valor_correto(numero_escolhido, lista_referente_ao_valor, diminuir=True):
         try:
-            numero_escolhido = int(numero_escolhido) - 1
+            numero_escolhido = int(numero_escolhido) - 1 if diminuir else int(numero_escolhido)
 
         except ValueError:
             numero_escolhido = len(lista_referente_ao_valor) + 1
@@ -172,7 +162,7 @@ class Personagem:
                   "Tente novamente\n")
             numero_escolhido = input("-> ")
             try:
-                numero_escolhido = int(numero_escolhido) - 1
+                numero_escolhido = int(numero_escolhido) - 1 if diminuir else int(numero_escolhido)
             except ValueError:
                 numero_escolhido = len(lista_referente_ao_valor) + 1
 
@@ -218,8 +208,7 @@ class Personagem:
                       f"NEX 99% -{poderes_da_trilha_atual[3]}\n")
                 index += 1
 
-            numero_trilha_escolhida = input("-> ")
-            numero_trilha_escolhida = self.retorna_valor_correto(numero_trilha_escolhida, todos_os_nomes_das_trilhas)
+            numero_trilha_escolhida = self.retorna_valor_correto(input("-> "), todos_os_nomes_das_trilhas)
 
             trilha_escolhida = todos_os_nomes_das_trilhas[numero_trilha_escolhida]
             poderes_da_trilha_escolhida = todas_as_trilhas[trilha_escolhida]
@@ -236,6 +225,7 @@ class Personagem:
         elif self.nivel_de_exposicao == 100:
             self.poderes.append(poderes_da_trilha_escolhida[3])
 
+        # apenas ocorre se chamar com self.versatilidade()
         else:
             print(f"Escolha um desdes primeiros poderes das trilhas de {self.classe}:\n")
 
@@ -249,7 +239,7 @@ class Personagem:
                 print(f"{index} - {poder}")
                 index += 1
 
-            numero_poder_escolhido = int(input("\n-> ")) - 1
+            numero_poder_escolhido = self.retorna_valor_correto(input("\n-> "), todos_os_poderes_para_escolher)
             poder_escolhido = todos_os_poderes_para_escolher[numero_poder_escolhido]
 
             self.poderes.append(poder_escolhido)
@@ -275,7 +265,7 @@ class Personagem:
                             "policial": ["percepção", "pontaria", "patrulha"],
                             "religioso": ["religião", "vontade", "acalentar"],
                             "servidor público": ["intuição", "vontade", "espírito cívico"],
-                            "teórico da conspiraçãop": ["investigação", "ocultismo", "eu já sabia"],
+                            "teórico da conspiração": ["investigação", "ocultismo", "eu já sabia"],
                             "t.i.": ["investigação", "tecnologia", "motor de busca"],
                             "trabalhador rural": ["adestramento", "sobrêvivencia", "desbravador"],
                             "trambiqueiro": ["crime", "enganação", "impostor"],
@@ -300,15 +290,14 @@ class Personagem:
 
             index += 1
 
-        numero_da_origem_escolhida = input("-> ")
-        numero_da_origem_escolhida = self.retorna_valor_correto(numero_da_origem_escolhida, lista_de_nomes_das_origens)
+        numero_da_origem_escolhida = self.retorna_valor_correto(input("-> "), lista_de_nomes_das_origens)
 
         origem_escolhida = lista_de_nomes_das_origens[numero_da_origem_escolhida]
-        informacoes_da_origem_escolhida = todas_as_origens[origem_escolhida]
 
         self.origem = origem_escolhida
+        informacoes_da_origem_escolhida = todas_as_origens[self.origem]
 
-        if origem_escolhida != "amnésico":
+        if self.origem != "amnésico":
             self.poderes.append(informacoes_da_origem_escolhida[2])
             self.treina_pericias(0, True, informacoes_da_origem_escolhida[:2])
         else:
@@ -320,11 +309,6 @@ class Personagem:
 
     def treina_pericias(self, numero_de_perciais_para_treinar=0, treina_pericia_direto=False, pericias=()):
         niveis_de_treinamento = {"destreinado": 0, "treinado": 1, "veterano": 2, "expert": 3}
-
-        if self.nivel_de_exposicao >= 35:
-            self.nivel_de_treinamento_em_pericia_maximo = "veterano"
-        elif self.nivel_de_exposicao >= 70:
-            self.nivel_de_treinamento_em_pericia_maximo = "expert"
 
         todas_as_pericias = ("acrobacia", "adestramento", "artes", "atletismo", "atualidades",
                              "ciências", "crime", "diplomacia", "enganação", "fortitude",
@@ -339,17 +323,13 @@ class Personagem:
                     print("Escolha entre estas duas pericias para treinar:\n")
 
                     if index == 0:
-                        print("1 - luta\n2 - pontaria")
-                    else:
-                        print("1 - fortitude\n2 - reflexos")
-
-                    numero_da_escolha = int(input("-> ")) - 1
-
-                    if index == 0:
                         pericias = ["luta", "pontaria"]
                     else:
                         pericias = ["fortitude", "reflexos"]
 
+                    print(f"1 - {pericias[0]}\n2 - {pericias[1]}")
+
+                    numero_da_escolha = self.retorna_valor_correto(input("-> "), pericias)
                     escolha = pericias[numero_da_escolha]
 
                     self.pericias_treinadas[escolha] = "treinado"
@@ -358,27 +338,47 @@ class Personagem:
                     if pericia not in self.pericias_treinadas:
                         self.pericias_treinadas[pericia] = "treinado"
                     else:
-                        self.treina_pericias(1)
+                        nivel_treinamento = self.pericias_treinadas[pericia]
+
+                        if nivel_treinamento == "expert":
+                            print("*UMA PERÍCIA NÃO FOI UPADO DEVIDO AO SEU NÍVEL DE TREINAMENTO JÁ SER O MÁXIMO")
+                            continue
+                        elif nivel_treinamento == "veterano":
+                            if niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo] >= niveis_de_treinamento[nivel_treinamento]:
+                                self.pericias_treinadas[pericia] = "expert"
+                            else:
+                                print("*UMA PERÍCIA NÃO FOI UPADO DEVIDO AO SEU NÍVEL DE TREINAMENTO JÁ SER O MÁXIMO --PERMITIDO--")
+                        else:
+                            if niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo] >= niveis_de_treinamento[nivel_treinamento]:
+                                self.pericias_treinadas[pericia] = "veterano"
+                            else:
+                                self.treina_pericias(1)
 
         if not treina_pericia_direto:
             while numero_de_perciais_para_treinar > 0:
+
                 todas_as_pericias_treinaveis = []
-
                 for pericia in todas_as_pericias:
-                    if pericia not in self.pericias_treinadas or niveis_de_treinamento[self.pericias_treinadas[pericia]] < niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo]:
+                    if pericia not in self.pericias_treinadas:
                         todas_as_pericias_treinaveis.append(pericia)
+                    else:
+                        nivel_treinamento_pericia = niveis_de_treinamento[self.pericias_treinadas[pericia]]
+                        nivel_treinamento_maximo = niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo]
+                        print(nivel_treinamento_pericia, nivel_treinamento_maximo,
+                              nivel_treinamento_pericia < nivel_treinamento_maximo)
 
-                print(f"Você pode treinar {numero_de_perciais_para_treinar} perícias"
-                      f"\n\nEscolha uma:")
+                        if nivel_treinamento_pericia < nivel_treinamento_maximo:
+                            todas_as_pericias_treinaveis.append(pericia)
+
+                print(f"Você pode treinar {numero_de_perciais_para_treinar} perícias\n"
+                      f"\nEscolha uma:")
 
                 index = 1
                 for pericia in todas_as_pericias_treinaveis:
                     print(f"{index} - {pericia.capitalize()}")
                     index += 1
 
-                numero_da_percia_escolhida = input("-> ")
-                numero_da_percia_escolhida = self.retorna_valor_correto(numero_da_percia_escolhida, todas_as_pericias_treinaveis)
-
+                numero_da_percia_escolhida = self.retorna_valor_correto(input("-> "), todas_as_pericias_treinaveis)
                 pericia_escolhida = todas_as_pericias_treinaveis[numero_da_percia_escolhida]
 
                 if pericia_escolhida not in self.pericias_treinadas:
@@ -423,8 +423,7 @@ class Personagem:
                         print(f"{index} - {atributo}")
                         index += 1
 
-                atributo_escolhido = input("\n-> ")
-                atributo_escolhido = self.retorna_valor_correto(atributo_escolhido, atributos)
+                atributo_escolhido = self.retorna_valor_correto(input("\n-> "), atributos)
 
                 if self.atributos[atributos[atributo_escolhido]] < 3:
                     self.atributos[atributos[atributo_escolhido]] += 1
@@ -447,8 +446,7 @@ class Personagem:
                         print(f"{index} - {atributo}")
                         index += 1
 
-                atributo_escolhido = input("\n-> ")
-                atributo_escolhido = self.retorna_valor_correto(atributo_escolhido, atributos)
+                atributo_escolhido = self.retorna_valor_correto(input("\n-> "), atributos)
 
                 if sem_limite:
                     self.atributos[atributos[atributo_escolhido]] += 1
@@ -473,87 +471,87 @@ class Personagem:
         for atributo in atributos:
             print(f"{index} - {atributo}")
             index += 1
-        atributo_escolhido = input("-> ")
-        atributo_escolhido = self.retorna_valor_correto(atributo_escolhido, atributos)
+
+        atributo_escolhido = self.retorna_valor_correto(input("-> "), atributos)
 
         return atributos[atributo_escolhido]
 
     def aumenta_nivel_de_exposicao(self):
         self.nivel_de_exposicao += 5
+        self.atualiza_status_extra()
+        self.atualiza_atributos()
+        self.atualiza_nivel_de_treinamento_maximo()
         self.recebe_beneficios_do_nivel_de_exposicao()
+        self.atualiza_atributos()
+
+        self.atualiza_banco_de_dados()
 
     def sobe_nex_ate_um_valor_determinado(self, valor_desejado):
-        vezes_para_upar = abs(self.nivel_de_exposicao - valor_desejado) // 5
+        if not str(valor_desejado).endswith("5") and not str(valor_desejado).endswith("0"):
+            print("valor inválido1")
+            return
+        elif self.nivel_de_exposicao - valor_desejado >= 5:
+            print("valor inválido2")
+            vezes_para_upar = 0
+        else:
+            vezes_para_upar = abs(self.nivel_de_exposicao - valor_desejado) // 5
 
         for _ in range(vezes_para_upar):
             self.aumenta_nivel_de_exposicao()
 
-    def status_extra(self):
-        self.vida -= self.vida_extra
-        self.pontos_de_esforco -= self.pontos_de_esforco_extra
-        self.sanidade -= self.sanidade_extra
+    def define_status_extra(self):
+        dict_status_extra = {"pv": 0,
+                             "pe": 0,
+                             "sn": 0}
 
-        if "calejado" in self.poderes:
-            if self.vida_extra_calejado != 0:
-                self.vida_extra_calejado -= (self.nivel_de_exposicao - 5)/5
-            self.vida_extra_calejado += self.nivel_de_exposicao/5
+        modificadores = {"calejado": ["pv", "5"],
+                         "dedicação": ["pe", "1.5 + nex/10"],
+                         "cicatrizes psicológicas": ["sn", "5"],
+                         "potencial aprimorado": ["pe", "5"],
+                         "potencial aprimorado (afinidade)": ["pe", "5"],
+                         "sangue de ferro": ["pv", "5"],
+                         "sangue de ferro (afinidade)": ["pv", "5"],
+                         "casca grossa": ["pv", "5"]}
 
-        if "dedicação" in self.poderes:
-            if str(self.nivel_de_exposicao)[-1:] == "5":
-                self.pontos_de_esforco_extra_dedicacao += 1
+        for poder in modificadores:
+            if poder in self.poderes:
+                if poder == "dedicação":
+                    dict_status_extra["pe"] += round(1.5 + self.nivel_de_exposicao / 10)
+                else:
+                    status_modificar = modificadores[poder][0]
+                    fator_de_calculo = float(modificadores[poder][1])
 
-        if "cicatrizes psicológicas" in self.poderes:
-            if self.sanidade_extra_cicatrizes_psicologicas != 0:
-                self.sanidade_extra_cicatrizes_psicologicas -= (self.nivel_de_exposicao - 5)/5
-            self.sanidade_extra_cicatrizes_psicologicas += self.nivel_de_exposicao/5
+                    dict_status_extra[status_modificar] += round(self.nivel_de_exposicao / fator_de_calculo)
 
-        if "potencial aprimorado" in self.poderes:
-            if self.pontos_de_esforco_extra_potencial_aprimorado != 0:
-                self.pontos_de_esforco_extra_potencial_aprimorado -= (self.nivel_de_exposicao-5)/5
-            self.pontos_de_esforco_extra_potencial_aprimorado += self.nivel_de_exposicao/5
+        self.pv_extra = dict_status_extra["pv"]
+        self.pe_extra = dict_status_extra["pe"]
+        self.sn_extra = dict_status_extra["sn"]
 
-        if "potencial aprimorado (afinidade)" in self.poderes:
-            if self.pontos_de_esforco_extra_potencial_aprimorado_afinidade != 0:
-                self.pontos_de_esforco_extra_potencial_aprimorado_afinidade -= (self.nivel_de_exposicao-5)/5
-            self.pontos_de_esforco_extra_potencial_aprimorado_afinidade += self.nivel_de_exposicao/5
+    def atualiza_status_extra(self):
+        self.vida -= self.pv_extra
+        self.pontos_de_esforco -= self.pe_extra
+        self.sanidade -= self.sn_extra
 
-        if "sangue de ferro" in self.poderes:
-            if self.vida_extra_sangue_de_ferro != 0:
-                self.vida_extra_sangue_de_ferro -= (self.nivel_de_exposicao - 5) / 2.5
-            self.vida_extra_sangue_de_ferro += self.nivel_de_exposicao / 2.5
+        self.define_status_extra()
 
-        if "sangue de ferro (afinidade)" in self.poderes:
-            if self.vida_extra_sangue_de_ferro_afinidade != 0:
-                self.vida_extra_sangue_de_ferro_afinidade -= (self.nivel_de_exposicao - 5) / 2.5
-            self.vida_extra_sangue_de_ferro_afinidade += self.nivel_de_exposicao / 2.5
-
-        if "casca grossa" in self.poderes:
-            if self.vida_extra_casca_grossa != 0:
-                self.vida_extra_casca_grossa -= (self.nivel_de_exposicao - 5) / 5
-            self.vida_extra_casca_grossa += self.nivel_de_exposicao / 5
-
-        self.vida_extra = self.vida_extra_calejado + self.vida_extra_sangue_de_ferro + self.vida_extra_sangue_de_ferro_afinidade + self.vida_extra_casca_grossa
-        self.pontos_de_esforco_extra = self.pontos_de_esforco_extra_dedicacao + self.pontos_de_esforco_extra_potencial_aprimorado + self.pontos_de_esforco_extra_potencial_aprimorado_afinidade
-        self.sanidade_extra = self.sanidade_extra_cicatrizes_psicologicas
-
-        self.vida += self.vida_extra
-        self.pontos_de_esforco += self.pontos_de_esforco_extra
-        self.sanidade += self.sanidade_extra
+        self.vida += self.pv_extra
+        self.pontos_de_esforco += self.pe_extra
+        self.sanidade += self.sn_extra
 
     def recebe_beneficios_do_nivel_de_exposicao(self):
         self.transcendeu = False
 
         if self.nivel_de_exposicao == 5:
-            self.atualiza_atributos()
-
             self.escolhe_classe()
             self.recebe_poderes()
 
             if self.classe == "combatente":
                 self.treina_pericias(0, True)
                 pericias_para_treinar = 1 + self.intelecto
+
             elif self.classe == "especialista":
                 pericias_para_treinar = 7 + self.intelecto
+
             else:
                 self.treina_pericias(0, True, ("ocultismo", "vontade"))
                 pericias_para_treinar = 3 + self.intelecto
@@ -564,6 +562,18 @@ class Personagem:
             self.escolhe_trilha()
             if "saber ampliado" in self.poderes:
                 self.aprende_ritual()
+
+            if "lâmina maldita" in self.poderes:
+                rituais_de_amaldicoar_arma = ("amaldiçoar arma com conhecimento", "amaldiçoar arma com energia",
+                                              "amaldiçoar arma com morte", "amaldiçoar arma com sangue")
+
+                for ritual in rituais_de_amaldicoar_arma:
+                    if ritual in self.rituais:
+                        self.poderes.remove(ritual + " (círculo 1)")
+                        self.poderes.append(ritual + " (círculo 1) *custo reduzido por lâmina maldita")
+
+                else:
+                    self.aprende_ritual(False, True)
 
         elif self.nivel_de_exposicao == 15:
             self.recebe_poderes()
@@ -649,29 +659,15 @@ class Personagem:
             if self.classe == "ocultista":
                 self.aprende_ritual(False, True)
 
-        self.status_extra()
-        self.atualiza_atributos()
-
-        self.aumenta_vida()
-        self.aumenta_pontos_de_esforco()
         if not self.transcendeu:
             self.aumenta_sanidade()
+        self.aumenta_vida()
+        self.aumenta_pontos_de_esforco()
 
         if self.classe == "ocultista":
             self.aprende_ritual(True)
 
-        if self.nivel_de_exposicao == 10 and "lâmina maldita" in self.poderes:
-            rituais_de_amaldicoar_arma = ("amaldiçoar arma com conhecimento", "amaldiçoar arma com energia",
-                                          "amaldiçoar arma com morte", "amaldiçoar arma com sangue")
-
-            for ritual in rituais_de_amaldicoar_arma:
-                if ritual in self.rituais:
-                    self.poderes.remove(ritual + " (círculo 1)")
-                    self.poderes.append(ritual + " (círculo 1) *custo reduzido por lâmina maldita")
-
-        elif self.nivel_de_exposicao == 10:
-            self.aprende_ritual(False, True)
-
+    def __str__(self):
         pericias_formatadas = ""
         rituais_formatados = ""
         poderes_formatados = ""
@@ -687,121 +683,43 @@ class Personagem:
 
         nex = self.nivel_de_exposicao if self.nivel_de_exposicao < 100 else self.nivel_de_exposicao - 1
 
-        print(f"NOME - {self.nome}\n"
-              f"\n"
-              f"             {self.agilidade}\n"
-              f"            AGI\n"
-              f"     {self.forca}               {self.intelecto}\n"
-              f"    FOR             INT\n"
-              f"\n"
-              f"        {self.presenca}         {self.vigor}\n"
-              f"       PRE       VIG\n"
-              f"\n"
-              f"ORIGEM - {self.origem}\n"
-              f"CLASSE - {self.classe} | {self.trilha}\n"
-              f"NEX - {nex}%\n"
-              f"PV - {self.vida}  |  PE - {self.pontos_de_esforco}\n"
-              f"SAN - {self.sanidade}\n"
-              f"\n"
-              f"PERÍCIAS:\n"
-              f"\n"
-              f"{pericias_formatadas}"
-              f"\n"
-              f"RITUAIS:\n"
-              f"\n"
-              f"{rituais_formatados}"
-              f"\n"
-              f"PODERES:\n"
-              f"\n"
-              f"{poderes_formatados}")
+        return f"NOME - {self.nome}\n"\
+              f"\n"\
+              f"             {self.agilidade}\n"\
+              f"            AGI\n"\
+              f"     {self.forca}               {self.intelecto}\n"\
+              f"    FOR             INT\n"\
+              f"\n"\
+              f"        {self.presenca}         {self.vigor}\n"\
+              f"       PRE       VIG\n"\
+              f"\n"\
+              f"ORIGEM - {self.origem}\n"\
+              f"CLASSE - {self.classe} | {self.trilha}\n"\
+              f"NEX - {nex}%\n"\
+              f"PV - {self.vida}  |  PE - {self.pontos_de_esforco}\n"\
+              f"SAN - {self.sanidade}\n"\
+              f"\n"\
+              f"PERÍCIAS:\n"\
+              f"\n"\
+              f"{pericias_formatadas}"\
+              f"\n"\
+              f"RITUAIS:\n"\
+              f"\n"\
+              f"{rituais_formatados}"\
+              f"\n"\
+              f"PODERES:\n"\
+              f"\n"\
+              f"{poderes_formatados}"
 
-        banco_dados = "https://op-database-728c3-default-rtdb.firebaseio.com/"
+    def custo_poder(self, poder):
+        dict_custo_poder = requests.get(f"{self.banco_dados}/info/poderes/.json").json()
 
-        pericias_formatado = {}
-        for pericia in self.pericias_lista:
-            if pericia not in self.pericias_treinadas:
-                pericias_formatado[pericia] = "nt"
-            else:
-                if self.pericias_treinadas[pericia] == "treinado":
-                    pericias_formatado[pericia] = "t"
-                elif self.pericias_treinadas[pericia] == "veterano":
-                    pericias_formatado[pericia] = "v"
-                elif self.pericias_treinadas[pericia] == "expert":
-                    pericias_formatado[pericia] = "e"
+        try:
+            custo = dict_custo_poder[poder][0]
+        except KeyError:
+            custo = "0pe"
 
-        poderes_formatado = {}
-        rituais_formatado = {}
-        for poder in self.poderes:
-            if "(círculo" not in poder:
-                poderes_formatado[poder] = "0pe"
-            else:
-                ritual = poder.split(" (")[0]
-                circulo = poder.split("círculo ")[1].replace(")", "")
-                circulo += "círculo"
-
-                rituais_formatado[ritual] = circulo
-
-        if not rituais_formatado:
-            rituais_formatado = ""
-
-        if self.novo:
-            dados_personagens = {f"{self.nome}": {
-                "anotações": "",
-                "atributos": {
-                    "agi": self.agilidade,
-                    "for": self.forca,
-                    "int": self.intelecto,
-                    "pre": self.presenca,
-                    "vig": self.vigor},
-                "classe": self.classe,
-                "defesa": 15 + self.agilidade if self.classe != "ocultista" else 10 + self.agilidade,
-                "inventario": {"arma": "0 I"},
-                "nex": self.nivel_de_exposicao,
-                "origem": self.origem,
-                "pericias": pericias_formatado,
-                "poderes": poderes_formatado,
-                "rituais": rituais_formatado,
-                "trilha": self.trilha,
-                "pv": {"maximo": self.vida, "atual": self.vida},
-                "pe": {"maximo": self.pontos_de_esforco, "atual": self.pontos_de_esforco},
-                "sn": {"maximo": self.sanidade, "atual": self.sanidade},
-                "numero_de_poderes_de_conhecimento_possuidos": self.numero_de_poderes_de_conhecimento_possuidos,
-                "numero_de_poderes_de_energia_possuidos": self.numero_de_poderes_de_energia_possuidos,
-                "numero_de_poderes_de_morte_possuidos": self.numero_de_poderes_de_morte_possuidos,
-                "numero_de_poderes_de_sangue_possuidos": self.numero_de_poderes_de_sangue_possuidos,
-                "afinidade": self.afinidade,
-                "xp": 0},
-                "ultimo_xp_ganho": 0}
-
-            dados_nomes = {f"{self.nome}": True}
-
-            requests.patch(f"{banco_dados}/personagens/.json", data=json.dumps(dados_personagens))
-            requests.patch(f"{banco_dados}/nomes/.json", data=json.dumps(dados_nomes))
-            print(f"{dados_personagens}\n{dados_nomes}")
-        else:
-            dados = {"atributos": {
-                         "agi": self.agilidade,
-                         "for": self.forca,
-                         "int": self.intelecto,
-                         "pre": self.presenca,
-                         "vig": self.vigor},
-                     "defesa": 15 + self.agilidade if self.classe != "ocultista" else 10 + self.agilidade,
-                     "nex": self.nivel_de_exposicao,
-                     "pericias": pericias_formatado,
-                     "poderes": poderes_formatado,
-                     "rituais": rituais_formatado,
-                     "trilha": self.trilha,
-                     "pv": {"maximo": self.vida, "atual": self.vida},
-                     "pe": {"maximo": self.pontos_de_esforco, "atual": self.pontos_de_esforco},
-                     "sn": {"maximo": self.sanidade, "atual": self.sanidade},
-                     "numero_de_poderes_de_conhecimento_possuidos": self.numero_de_poderes_de_conhecimento_possuidos,
-                     "numero_de_poderes_de_energia_possuidos": self.numero_de_poderes_de_energia_possuidos,
-                     "numero_de_poderes_de_morte_possuidos": self.numero_de_poderes_de_morte_possuidos,
-                     "numero_de_poderes_de_sangue_possuidos": self.numero_de_poderes_de_sangue_possuidos,
-                     "afinidade": self.afinidade}
-
-            requests.patch(f"{banco_dados}/personagens/{self.nome}/.json", data=json.dumps(dados))
-            print(dados)
+        return custo
 
     def define_afinidade(self):
         elementos = ("conhecimento", "energia", "morte", "sangue")
@@ -813,8 +731,7 @@ class Personagem:
             print(f"{index} - {elemento}")
             index += 1
 
-        numero_do_elemento_escolhido = input("\n-> ")
-        numero_do_elemento_escolhido = self.retorna_valor_correto(numero_do_elemento_escolhido, elementos)
+        numero_do_elemento_escolhido = self.retorna_valor_correto(input("\n-> "), elementos)
 
         elemento_escolhido = elementos[numero_do_elemento_escolhido]
 
@@ -829,8 +746,7 @@ class Personagem:
             print(f"{index} - {escolha}")
             index += 1
 
-        numero_da_escolha = input("\n-> ")
-        numero_da_escolha = self.retorna_valor_correto(numero_da_escolha, escolhas)
+        numero_da_escolha = self.retorna_valor_correto(input("\n-> "), escolhas)
 
         escolha = escolhas[numero_da_escolha]
 
@@ -840,40 +756,25 @@ class Personagem:
             self.escolhe_trilha()
 
     def recebe_poderes(self):
+        niveis_ganha_poder = (15, 30, 45, 60, 75, 90)
+
         if self.nivel_de_exposicao == 5:
 
             if self.classe == "combatente":
-
                 self.poderes.append("ataque especial")
 
             elif self.classe == "especialista":
-
                 self.poderes.append("eclético")
                 self.poderes.append("perito")
 
             else:
                 self.poderes.append("escolhido pelo Outro Lado")
 
-        elif self.nivel_de_exposicao == 15:
-            self.escolhe_poderes()
-
-        elif self.nivel_de_exposicao == 30:
+        elif self.nivel_de_exposicao in niveis_ganha_poder:
             self.escolhe_poderes()
 
         elif self.classe == "especialista" and self.nivel_de_exposicao == 40:
             self.poderes.append("engenhosidade")
-
-        elif self.nivel_de_exposicao == 45:
-            self.escolhe_poderes()
-
-        elif self.nivel_de_exposicao == 60:
-            self.escolhe_poderes()
-
-        elif self.nivel_de_exposicao == 75:
-            self.escolhe_poderes()
-
-        elif self.nivel_de_exposicao == 90:
-            self.escolhe_poderes()
 
     def escolhe_poderes(self, escolhendo_por_expansao_de_conhecimento=False):
         todas_classes_dos_poderes = ["combatente", "especialista", "ocultista"]
@@ -881,9 +782,7 @@ class Personagem:
         poderes_de_classe = {}
 
         if not escolhendo_por_expansao_de_conhecimento:
-            for classe in todas_classes_dos_poderes:
-                if classe == self.classe:
-                    classes_dos_poderes.append(classe)
+            classes_dos_poderes.append(self.classe)
         else:
             for classe in todas_classes_dos_poderes:
                 if classe != self.classe:
@@ -905,7 +804,7 @@ class Personagem:
                                                "segurar gatilho": ["", 60, ""],
                                                "sentido tático": ["intelecto-2", "", "percepção tática"],
                                                "tanque de guerra": ["*", "", ""],
-                                               "tiro cereteiro": ["", "", "pontaria"],
+                                               "tiro certeiro": ["", "", "pontaria"],
                                                "tiro de cobertura": ["", "", ""],
                                                "treinamento em perícia": ["", "", ""],
                                                "transcender": ["", "", ""]}
@@ -941,7 +840,7 @@ class Personagem:
                                               "mestre em elemento": ["*", "", ""],
                                               "ritual potente": ["intelecto-2", "", ""],
                                               "ritual predileto": ["", "", ""],
-                                              "tatuagem rituaglística": ["", "", ""],
+                                              "tatuagem ritualística": ["", "", ""],
                                               "treinamento em perícia":  ["", "", ""],
                                               "transcender": ["", "", ""]}
 
@@ -970,8 +869,7 @@ class Personagem:
                 print(f"{index} - {poder}")
                 index += 1
 
-            numero_do_poder_escolhido = input("-> ")
-            numero_do_poder_escolhido = self.retorna_valor_correto(numero_do_poder_escolhido, todos_nomes_de_poder_para_escolher)
+            numero_do_poder_escolhido = self.retorna_valor_correto(input("-> "), todos_nomes_de_poder_para_escolher)
 
             poder_escolhido = todos_nomes_de_poder_para_escolher[numero_do_poder_escolhido]
             requisitos_do_poder = poderes_de_classe_para_escolher[poder_escolhido]
@@ -985,9 +883,6 @@ class Personagem:
                 nao_atendeu_requisito = False
 
                 for requisito in requisitos_do_poder:
-                    if requisito == "*":
-                        break
-
                     if requisito != "" and index == 1:
                         separador_nome = requisito.find("-")
                         separador_valor = requisito.find("-") + 1
@@ -1110,13 +1005,12 @@ class Personagem:
                     poderes_com_afinidade[elemento].append(poder_do_elemento)
 
         for elemento in poderes_com_afinidade:
-
             for poder in poderes_com_afinidade[elemento]:
                 del todos_os_poderes[elemento][poder]
 
         elementos = {1: "elemento variado", 2: "conhecimento", 3: "energia", 4: "morte", 5: "sangue"}
 
-        numero_de_poderes_de_elemento_variado = len([poder for poder in poderes_de_elemento_variado_para_escolher])
+        numero_de_poderes_de_elemento_variado = len(poderes_de_elemento_variado_para_escolher)
 
         while not recebeu_poder:
             print("Escolha um poder de:")
@@ -1135,8 +1029,7 @@ class Personagem:
                     index += 1
                 print("\n", end="")
 
-            numero_do_poder_escolhido = input("-> ")
-            numero_do_poder_escolhido = self.retorna_valor_correto(numero_do_poder_escolhido, todos_os_nomes_dos_poderes)
+            numero_do_poder_escolhido = self.retorna_valor_correto(input("-> "), todos_os_nomes_dos_poderes)
 
             numero_elemento = 1 if numero_do_poder_escolhido < numero_de_poderes_de_elemento_variado else 2
 
@@ -1156,7 +1049,7 @@ class Personagem:
                     self.aprende_ritual()
                     recebeu_poder = True
                 else:
-                    print("Você atingiu o máximo de rituais que você pode ter com esta quantidade de intelecto!")
+                    print("Você atingiu o máximo de rituais que pode ter com esta quantidade de intelecto!")
 
             elif elemento == "conhecimento":
                 if poderes_de_conhecimento_para_escolher[escolha] > self.numero_de_poderes_de_conhecimento_possuidos:
@@ -1229,26 +1122,13 @@ class Personagem:
         rituais_para_aprender = 1
         elementos = ("conhecimento", "energia", "morte", "sangue", "medo")
 
-        if self.classe == "combatente" or self.classe == "especialista":
-            if self.nivel_de_exposicao >= 45 and not self.pode_aprender_rituais_de_segundo_circulo:
-                self.pode_aprender_rituais_de_segundo_circulo = True
-            elif self.nivel_de_exposicao >= 75 and not self.pode_aprender_rituais_de_terceiro_circulo:
-                self.pode_aprender_rituais_de_terceiro_circulo = True
-        else:
-            if aprendendo_por_escolhido_pelo_outro_lado and self.nivel_de_exposicao == 5:
-                rituais_para_aprender = 3
+        if aprendendo_por_escolhido_pelo_outro_lado and self.nivel_de_exposicao == 5:
+            rituais_para_aprender = 3
 
-            elif self.nivel_de_exposicao == 25:
-                self.pode_aprender_rituais_de_segundo_circulo = True
-
-            elif self.nivel_de_exposicao == 55:
-                self.pode_aprender_rituais_de_terceiro_circulo = True
-
-            elif self.nivel_de_exposicao == 85:
-                self.pode_aprender_rituais_de_quarto_circulo = True
+        self.atualiza_circulo_maximo()
 
         if aprendendo_por_trilha_de_ocultista:
-            if self.nivel_de_exposicao == 10 and self.trilha == "lâmina paranormal":
+            if self.trilha == "lâmina paranormal" and self.nivel_de_exposicao == 10:
                 rituais_para_escolher = ("amaldiçoar arma com conhecimento", "amaldiçoar arma com energia",
                                          "amaldiçoar arma com morte", "amaldiçoar arma com sangue")
 
@@ -1259,12 +1139,10 @@ class Personagem:
                     print(f"{index} - {ritual}")
                     index += 1
 
-                numero_do_ritual_escolhido = input("-> ")
-                numero_do_ritual_escolhido = self.retorna_valor_correto(numero_do_ritual_escolhido, rituais_para_escolher)
-
+                numero_do_ritual_escolhido = self.retorna_valor_correto(input("-> "), rituais_para_escolher)
                 ritual_escolhido = rituais_para_escolher[numero_do_ritual_escolhido]
 
-                self.rituais.append(ritual_escolhido + " círculo 1")
+                self.rituais.append(ritual_escolhido + " (círculo 1)")
 
             elif self.nivel_de_exposicao == 100:
                 if self.trilha == "conduíte":
@@ -1278,227 +1156,53 @@ class Personagem:
                 else:
                     ritual_de_trilha_para_aprender = 'presença do medo'
 
-                self.poderes.append(ritual_de_trilha_para_aprender + " círculo 4")
+                self.poderes.append(ritual_de_trilha_para_aprender + " (círculo 4)")
 
-        if not aprendendo_por_trilha_de_ocultista:
-            todos_os_rituais_de_conhecimento_primeiro_circulo = ('amaldiçoar arma com conhecimento',
-                                                                 'compreensão paranormal',
-                                                                 'enfeitiçar',
-                                                                 'perturbação',
-                                                                 'ouvir os sussurros',
-                                                                 'tecer ilusão',
-                                                                 'terceiro olho') if self.pode_aprender_rituais_de_primeiro_circulo else ()
-
-            todos_os_rituais_de_conhecimento_segundo_circulo = ('aprimorar mente',
-                                                                'detecção de ameaças',
-                                                                'esconder dos olhos',
-                                                                'invadir mente',
-                                                                'localização') if self.pode_aprender_rituais_de_segundo_circulo else ()
-
-            todos_os_rituais_de_conhecimento_terceiro_circulo = ('alterar memória',
-                                                                 'contato paranormal',
-                                                                 'mergulho mental',
-                                                                 'vidência') if self.pode_aprender_rituais_de_terceiro_circulo else ()
-
-            todos_os_rituais_de_conhecimento_quarto_circulo = ('controle mental',
-                                                               'inexistir',
-                                                               'possessão') if self.pode_aprender_rituais_de_quarto_circulo else ()
-
-            todos_os_rituais_de_energia_primeiro_circulo = ('amaldiçoar arma com energia',
-                                                            'amaldiçoar tecnologia',
-                                                            'coincidência forçada',
-                                                            'eletrocussão',
-                                                            'embaralhar',
-                                                            'luz',
-                                                            'polarização caótica') if self.pode_aprender_rituais_de_primeiro_circulo else ()
-
-            todos_os_rituais_de_energia_segundo_circulo = ('chamas do caos',
-                                                           'contenção fantasmagórica',
-                                                           'dissonância acústica',
-                                                           'sopro do caos',
-                                                           'tela de ruído') if self.pode_aprender_rituais_de_segundo_circulo else ()
-
-            todos_os_rituais_de_energia_terceiro_circulo = ('convocação instantânea',
-                                                            'salto fantasma',
-                                                            'transfigurar água',
-                                                            'transfigurar terra') if self.pode_aprender_rituais_de_terceiro_circulo else ()
-
-            todos_os_rituais_de_energia_quarto_circulo = ('alterar destino',
-                                                          'deflagração de energia',
-                                                          'teletransporte') if self.pode_aprender_rituais_de_quarto_circulo else ()
-
-            todos_os_rituais_de_morte_primeiro_circulo = ('amaldiçoar arma com morte',
-                                                          'cicatrização',
-                                                          'consumir manancial',
-                                                          'decadência',
-                                                          'definhar',
-                                                          'espirais da perdição',
-                                                          'nuvem de cinzas') if self.pode_aprender_rituais_de_primeiro_circulo else ()
-
-            todos_os_rituais_de_morte_segundo_circulo = ('desacelerar impacto',
-                                                         'eco espiral',
-                                                         'paradoxo',
-                                                         'miasma entrópico',
-                                                         'velocidade mortal') if self.pode_aprender_rituais_de_segundo_circulo else ()
-
-            todos_os_rituais_de_morte_terceiro_circulo = ('âncora temporal',
-                                                          'poeira da podridão',
-                                                          'tentáculos de lodo',
-                                                          'zerar entropia') if self.pode_aprender_rituais_de_terceiro_circulo else ()
-
-            todos_os_rituais_de_morte_quarto_circulo = ('convocar o algoz',
-                                                        'distorção temporal',
-                                                        'fim inevitável') if self.pode_aprender_rituais_de_quarto_circulo else ()
-
-            todos_os_rituais_de_sangue_primeiro_circulo = ('amaldiçoar arma com sangue',
-                                                           'arma atroz',
-                                                           'armadura de sangue',
-                                                           'corpo adaptado',
-                                                           'distorcer aparência',
-                                                           'fortalecimento sensorial',
-                                                           'ódio incontrolável') if self.pode_aprender_rituais_de_primeiro_circulo else ()
-
-            todos_os_rituais_de_sangue_segundo_circulo = ('aprimorar físico',
-                                                          'descarnar',
-                                                          'flagelo de sangue',
-                                                          'hemofagia',
-                                                          'transfusão vital') if self.pode_aprender_rituais_de_segundo_circulo else ()
-
-            todos_os_rituais_de_sangue_terceiro_circulo = ('ferver sangue',
-                                                           'forma monstruosa',
-                                                           'purgatório',
-                                                           'vomitar pestes') if self.pode_aprender_rituais_de_terceiro_circulo else ()
-
-            todos_os_rituais_de_sangue_quarto_circulo = ('capturar o coração',
-                                                         'invólucro de carne',
-                                                         'vínculo de sangue') if self.pode_aprender_rituais_de_quarto_circulo else ()
-
-            todos_os_rituais_de_medo_primeiro_circulo = (
-                'cinerária',) if self.pode_aprender_rituais_de_primeiro_circulo else ()
-
-            todos_os_rituais_de_medo_segundo_circulo = ('proteção contra rituais',
-                                                        'rejeitar névoa') if self.pode_aprender_rituais_de_segundo_circulo else ()
-
-            todos_os_rituais_de_medo_terceiro_circulo = (
-                'dissipar ritual',) if self.pode_aprender_rituais_de_terceiro_circulo else ()
-
-            todos_os_rituais_primeiro_circulo = todos_os_rituais_de_conhecimento_primeiro_circulo + todos_os_rituais_de_energia_primeiro_circulo + todos_os_rituais_de_morte_primeiro_circulo + todos_os_rituais_de_sangue_primeiro_circulo + todos_os_rituais_de_medo_primeiro_circulo
-
-            todos_os_rituais_segundo_circulo = todos_os_rituais_de_conhecimento_segundo_circulo + todos_os_rituais_de_energia_segundo_circulo + todos_os_rituais_de_morte_segundo_circulo + todos_os_rituais_de_sangue_segundo_circulo + todos_os_rituais_de_medo_segundo_circulo
-
-            todos_os_rituais_terceiro_circulo = todos_os_rituais_de_conhecimento_terceiro_circulo + todos_os_rituais_de_energia_terceiro_circulo + todos_os_rituais_de_morte_terceiro_circulo + todos_os_rituais_de_sangue_terceiro_circulo + todos_os_rituais_de_medo_terceiro_circulo
-
-            todos_os_rituais_quarto_circulo = todos_os_rituais_de_conhecimento_quarto_circulo + todos_os_rituais_de_energia_quarto_circulo + todos_os_rituais_de_morte_quarto_circulo + todos_os_rituais_de_sangue_quarto_circulo
-
-            todos_os_rituais = todos_os_rituais_primeiro_circulo + todos_os_rituais_segundo_circulo + todos_os_rituais_terceiro_circulo + todos_os_rituais_quarto_circulo
+        else:
+            todos_os_rituais = requests.get(f"{self.banco_dados}/info/rituais/.json").json()
 
             while rituais_para_aprender > 0:
-                todos_os_rituais_para_escolher_lista = []
+                todos_os_rituais_para_escolher = []
 
                 for ritual in todos_os_rituais:
                     if ritual not in self.rituais:
-                        todos_os_rituais_para_escolher_lista.append(ritual)
+                        todos_os_rituais_para_escolher.append(ritual)
 
-                todos_os_rituais_para_escolher_tupla = tuple(todos_os_rituais_para_escolher_lista)
+                todos_os_rituais_para_escolher = tuple(todos_os_rituais_para_escolher)
 
                 print("Escolha um destes rituais:\n")
 
                 index = 1
-                for ritual in todos_os_rituais_para_escolher_tupla:
+                for ritual in todos_os_rituais_para_escolher:
                     print(f"{index} - {ritual}")
                     index += 1
 
                 if aprendendo_por_grimorio_ritualistico:
                     print("*este ritual será adicionado ao seu grimório ritualistico")
-                numero_do_ritual_escolhido = input("-> ")
-                numero_do_ritual_escolhido = self.retorna_valor_correto(numero_do_ritual_escolhido, todos_os_rituais_para_escolher_tupla)
 
-                ritual_escolhido = todos_os_rituais_para_escolher_tupla[numero_do_ritual_escolhido]
+                numero_do_ritual_escolhido = self.retorna_valor_correto(input("-> "), todos_os_rituais_para_escolher)
+                ritual_escolhido = todos_os_rituais_para_escolher[numero_do_ritual_escolhido]
 
-                if ritual_escolhido not in self.poderes:
-                    rituais_para_aprender -= 1
-                    if aprendendo_por_escolhido_pelo_outro_lado:
-                        self.limite_de_rituais_para_aprender += 1
-                else:
-                    print("Você já possui este ritual!")
-                    continue
+                rituais_para_aprender -= 1
+                if aprendendo_por_escolhido_pelo_outro_lado:
+                    self.limite_de_rituais_para_aprender += 1
 
-                circulo_ritual = 0
+                info_ritual = todos_os_rituais[ritual_escolhido]
+                circulo_ritual = info_ritual[0][:1]
+                elemento = info_ritual[1]
 
-                for elemento in elementos:
+                if not aprendendo_por_escolhido_pelo_outro_lado:
                     if elemento == "conhecimento":
-                        if not aprendendo_por_escolhido_pelo_outro_lado:
-                            self.numero_de_poderes_de_conhecimento_possuidos += 1
-
-                        if ritual_escolhido in todos_os_rituais_de_conhecimento_primeiro_circulo:
-                            circulo_ritual = 1
-
-                        elif ritual_escolhido in todos_os_rituais_de_conhecimento_segundo_circulo:
-                            circulo_ritual = 2
-
-                        elif ritual_escolhido in todos_os_rituais_de_conhecimento_terceiro_circulo:
-                            circulo_ritual = 3
-
-                        elif ritual_escolhido in todos_os_rituais_de_conhecimento_quarto_circulo:
-                            circulo_ritual = 4
+                        self.numero_de_poderes_de_conhecimento_possuidos += 1
 
                     elif elemento == "energia":
-                        if not aprendendo_por_escolhido_pelo_outro_lado:
-                            self.numero_de_poderes_de_energia_possuidos += 1
-
-                        if ritual_escolhido in todos_os_rituais_de_energia_primeiro_circulo:
-                            circulo_ritual = 1
-
-                        elif ritual_escolhido in todos_os_rituais_de_energia_segundo_circulo:
-                            circulo_ritual = 2
-
-                        elif ritual_escolhido in todos_os_rituais_de_energia_terceiro_circulo:
-                            circulo_ritual = 3
-
-                        elif ritual_escolhido in todos_os_rituais_de_energia_quarto_circulo:
-                            circulo_ritual = 4
+                        self.numero_de_poderes_de_energia_possuidos += 1
 
                     elif elemento == "morte":
-                        if not aprendendo_por_escolhido_pelo_outro_lado:
-                            self.numero_de_poderes_de_morte_possuidos += 1
-
-                        if ritual_escolhido in todos_os_rituais_de_morte_primeiro_circulo:
-                            circulo_ritual = 1
-
-                        elif ritual_escolhido in todos_os_rituais_de_morte_segundo_circulo:
-                            circulo_ritual = 2
-
-                        elif ritual_escolhido in todos_os_rituais_de_morte_terceiro_circulo:
-                            circulo_ritual = 3
-
-                        elif ritual_escolhido in todos_os_rituais_de_morte_quarto_circulo:
-                            circulo_ritual = 4
+                        self.numero_de_poderes_de_morte_possuidos += 1
 
                     elif elemento == "sangue":
-                        if not aprendendo_por_escolhido_pelo_outro_lado:
-                            self.numero_de_poderes_de_sangue_possuidos += 1
-
-                        if ritual_escolhido in todos_os_rituais_de_sangue_primeiro_circulo:
-                            circulo_ritual = 1
-
-                        elif ritual_escolhido in todos_os_rituais_de_sangue_segundo_circulo:
-                            circulo_ritual = 2
-
-                        elif ritual_escolhido in todos_os_rituais_de_sangue_terceiro_circulo:
-                            circulo_ritual = 3
-
-                        elif ritual_escolhido in todos_os_rituais_de_sangue_quarto_circulo:
-                            circulo_ritual = 4
-
-                    elif elemento == "medo":
-                        if ritual_escolhido in todos_os_rituais_de_medo_primeiro_circulo:
-                            circulo_ritual = 1
-
-                        elif ritual_escolhido in todos_os_rituais_de_medo_segundo_circulo:
-                            circulo_ritual = 2
-
-                        elif ritual_escolhido in todos_os_rituais_de_medo_terceiro_circulo:
-                            circulo_ritual = 3
+                        self.numero_de_poderes_de_sangue_possuidos += 1
 
                 if aprendendo_por_grimorio_ritualistico:
                     self.poderes.append(ritual_escolhido + f" (círculo {circulo_ritual} - grimório ritualístico)")
@@ -1605,11 +1309,139 @@ class Personagem:
             self.presenca = self.atributos["presença"]
             self.vigor = self.atributos["vigor"]
 
-    def atualiza_vida(self):
-        self.vida = self.vida + self.vida_extra
+    def formata_pericias(self):
+        pericias_formatado = {}
+        for pericia in self.pericias_lista:
+            if pericia not in self.pericias_treinadas:
+                pericias_formatado[pericia] = "nt"
+            else:
+                if self.pericias_treinadas[pericia] == "treinado":
+                    pericias_formatado[pericia] = "t"
+                elif self.pericias_treinadas[pericia] == "veterano":
+                    pericias_formatado[pericia] = "v"
+                elif self.pericias_treinadas[pericia] == "expert":
+                    pericias_formatado[pericia] = "e"
+
+        return pericias_formatado
+
+    def formata_poderes(self):
+        poderes_formatado = {}
+        for poder in self.poderes:
+            if "(círculo" not in poder:
+                poderes_formatado[poder] = self.custo_poder(poder)
+
+        return poderes_formatado
+
+    def formata_rituais(self):
+        rituais_formatado = {}
+        for poder in self.poderes:
+            if "(círculo" in poder:
+                ritual = poder.split(" (")[0]
+                circulo = poder.split("círculo ")[1].replace(")", "")
+                circulo += "círculo"
+
+                rituais_formatado[ritual] = circulo
+
+        if not rituais_formatado:
+            rituais_formatado = ""
+
+        return rituais_formatado
+
+    def atualiza_nivel_de_treinamento_maximo(self):
+        if self.nivel_de_exposicao >= 70:
+            self.nivel_de_treinamento_em_pericia_maximo = "expert"
+        elif self.nivel_de_exposicao >= 35:
+            self.nivel_de_treinamento_em_pericia_maximo = "veterano"
+        else:
+            self.nivel_de_treinamento_em_pericia_maximo = "treinado"
+
+    def atualiza_circulo_maximo(self):
+        if self.classe == "combatente" or self.classe == "especialista":
+            if self.nivel_de_exposicao >= 75 and not self.pode_aprender_rituais_de_segundo_circulo:
+                self.pode_aprender_rituais_de_terceiro_circulo = True
+
+            elif self.nivel_de_exposicao >= 45 and not self.pode_aprender_rituais_de_terceiro_circulo:
+                self.pode_aprender_rituais_de_segundo_circulo = True
+        else:
+            if self.nivel_de_exposicao >= 85:
+                self.pode_aprender_rituais_de_quarto_circulo = True
+
+            elif self.nivel_de_exposicao >= 55:
+                self.pode_aprender_rituais_de_terceiro_circulo = True
+
+            elif self.nivel_de_exposicao >= 25:
+                self.pode_aprender_rituais_de_segundo_circulo = True
+
+    def atualiza_banco_de_dados(self):
+        pericias_formatado = self.formata_pericias()
+        poderes_formatado = self.formata_poderes()
+        rituais_formatado = self.formata_rituais()
+
+        if self.novo:
+            dados_personagens = {f"{self.nome}": {
+                "anotações": "",
+                "atributos": {
+                    "agi": self.agilidade,
+                    "for": self.forca,
+                    "int": self.intelecto,
+                    "pre": self.presenca,
+                    "vig": self.vigor},
+                "classe": self.classe,
+                "defesa": 15 + self.agilidade if self.classe != "ocultista" else 10 + self.agilidade,
+                "inventario": {"arma": "0 I"},
+                "nex": self.nivel_de_exposicao,
+                "origem": self.origem,
+                "pericias": pericias_formatado,
+                "poderes": poderes_formatado,
+                "rituais": rituais_formatado,
+                "trilha": self.trilha,
+                "pv": {"maximo": self.vida, "atual": self.vida},
+                "pe": {"maximo": self.pontos_de_esforco, "atual": self.pontos_de_esforco},
+                "sn": {"maximo": self.sanidade, "atual": self.sanidade},
+                "numero_de_poderes_de_conhecimento_possuidos": self.numero_de_poderes_de_conhecimento_possuidos,
+                "numero_de_poderes_de_energia_possuidos": self.numero_de_poderes_de_energia_possuidos,
+                "numero_de_poderes_de_morte_possuidos": self.numero_de_poderes_de_morte_possuidos,
+                "numero_de_poderes_de_sangue_possuidos": self.numero_de_poderes_de_sangue_possuidos,
+                "afinidade": self.afinidade,
+                "xp": 0,
+                "ultimo_xp_ganho": 0,
+                "limite_rituais": self.limite_de_rituais_para_aprender}}
+
+            dados_nomes = {f"{self.nome}": False}
+
+            requests.patch(f"{self.banco_dados}/personagens/.json", data=json.dumps(dados_personagens))
+            requests.patch(f"{self.banco_dados}/nomes/.json", data=json.dumps(dados_nomes))
+
+            self.novo = False
+
+        else:
+            dados = {"atributos": {
+                "agi": self.agilidade,
+                "for": self.forca,
+                "int": self.intelecto,
+                "pre": self.presenca,
+                "vig": self.vigor},
+                "defesa": 15 + self.agilidade if self.classe != "ocultista" else 10 + self.agilidade,
+                "nex": self.nivel_de_exposicao,
+                "pericias": pericias_formatado,
+                "poderes": poderes_formatado,
+                "rituais": rituais_formatado,
+                "trilha": self.trilha,
+                "pv": {"maximo": self.vida, "atual": self.vida},
+                "pe": {"maximo": self.pontos_de_esforco, "atual": self.pontos_de_esforco},
+                "sn": {"maximo": self.sanidade, "atual": self.sanidade},
+                "numero_de_poderes_de_conhecimento_possuidos": self.numero_de_poderes_de_conhecimento_possuidos,
+                "numero_de_poderes_de_energia_possuidos": self.numero_de_poderes_de_energia_possuidos,
+                "numero_de_poderes_de_morte_possuidos": self.numero_de_poderes_de_morte_possuidos,
+                "numero_de_poderes_de_sangue_possuidos": self.numero_de_poderes_de_sangue_possuidos,
+                "afinidade": self.afinidade,
+                "limite_rituais": self.limite_de_rituais_para_aprender}
+
+            requests.patch(f"{self.banco_dados}/personagens/{self.nome}/.json", data=json.dumps(dados))
+
 
 # treinamento de pericias - medicina
 
 # personagem = Personagem(nome, bool(é novo?)
-
 # personagem.aumenta_nivel_de_exposicao() SE JÁ EXISTIR
+

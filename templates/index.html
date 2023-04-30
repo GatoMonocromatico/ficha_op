@@ -16,6 +16,16 @@
         </div>
     </div>
 
+    <div id="descricao" class="secoes_bloco2">
+        Descrição:
+        <div id="xdesc">
+          <div class="line" id="xlinha1"></div>
+          <div class="line" id="xlinha2"></div>
+        </div>
+        <textarea id="text_desc" class="text_area" readonly cols="12">*Selecione um poder ou ritual para saber suas informações
+        </textarea>
+    </div>
+
     <div id="escurecer_tela"></div>
 
     <h1>Ficha {{ nome }}</h1>
@@ -68,32 +78,47 @@
             <textarea id="text_pericias" class="text_area" readonly cols="12">lorem ipsum</textarea>
         </div>
 
-        <div id="secao2_3">
+        <div id="secao2">
             <div id="rituais" class="secoes_bloco2">
                 Rituais:
-                <textarea id="text_rituais" class="text_area" readonly cols="12">lorem ipsum
-                </textarea>
+                <div id="text_rituais" class="insert_content">
+                </div>
             </div>
 
             <div id="poderes" class="secoes_bloco2">
                 Poderes:
-                <textarea id="text_poderes" class="text_area" readonly cols="12">lorem ipsum
-                </textarea>
+                <div id="text_poderes" class="insert_content">lorem ipsum
+                </div>
             </div>
         </div>
         </div>
 
         <div id="secao4" class="secoes_bloco2">
+            <div id="inventario" class="secoes_bloco2">
+                <label id="label_inventario">Inventário:</label>
+                <textarea id="text_inventario" class="text_area" readonly cols="12">lorem ipsum</textarea>
+            </div>
+
+            <div id="infos" class="secoes_bloco2">
+                Info:
+                <textarea id="text_infos" class="text_area" readonly cols="12">Afinidade
+(infos)
+
+classe
+(infos)
+
+origem
+(infos)
+
+trilha
+(infos)</textarea>
+            </div>
+        </div>
+        <div id="secao_anotacoes">
             <div id="anotacoes">
                 <label id="label_anotacoes">Anotações:</label><button id="btn_anotacoes" class="btns_secao4">salvar</button>
                 <textarea id="text_anotacoes" class="text_area"></textarea>
             </div>
-
-            <div id="inventario">
-                <label id="label_inventario">Inventário:</label><button id="btn_atualiza_inv" class="btns_secao4">atualizar</button>
-                <textarea id="text_inventario" class="text_area" readonly cols="12">lorem ipsum</textarea>
-            </div>
-
         </div>
     </div>
 </body>

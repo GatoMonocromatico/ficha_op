@@ -69,21 +69,29 @@
 }
 
 #inp {
+    text-align: center;
     width: 50%;
     font-size: 4vw;
     margin-bottom: 1vw;
-    border-radius: 4vw;
-    padding-left: 1vw;
-    padding-right: 1vw;
+    border-radius: 0.5vw;
+    outline: none;
+}
+
+#num_inimigos {
+    width: 50%;
+    margin-bottom: 1vw;
+    font-size: 4vw;
+    border-radius: 0.5vw;
     text-align: center;
     outline: none;
 }
 
 #btn {
+    border-radius: 0.5vw;
+    height: 4.9vw;
     font-size: 3vw;
-    border-radius: 3vw;
-    padding-left: 1.5vw;
-    padding-right: 1.5vw;
+    text-align: center;
+    width: 50%;
 }
 
 ::-webkit-input-placeholder {
@@ -126,6 +134,17 @@
     margin-left: 0.3vw;
     border-bottom: 0.2vw solid white;
     border-radius: 50%;
+}
+
+#p {
+    width: 68%;
+    font-size: 4vh;
+    text-align: left;
+}
+
+#div_personagens {
+    top: 2vh;
+    height: 93vh;
 }
 
 @keyframes roda {
