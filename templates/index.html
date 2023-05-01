@@ -18,13 +18,18 @@
 
     <div id="descricao" class="secoes_bloco2">
         Descrição:
-        <div id="xdesc">
-          <div class="line" id="xlinha1"></div>
-          <div class="line" id="xlinha2"></div>
+        <div class="xpopup" id="xdesc">
+          <div class="line"></div>
+          <div class="line"></div>
         </div>
-        <textarea id="text_desc" class="text_area" readonly cols="12">*Selecione um poder ou ritual para saber suas informações
-        </textarea>
+        <textarea id="text_desc" class="text_area" readonly cols="12"></textarea>
     </div>
+
+    <div id="resultado_rd"><span id="span_rt_rd"></span><span id="span_num_rd"></span>
+        <div class="xpopup" id="xrd">
+          <div class="line"></div>
+          <div class="line"></div>
+        </div></div>
 
     <div id="escurecer_tela"></div>
 
@@ -73,9 +78,21 @@
 
     <div id="bloco2">
         <div id="secao_ppr">
-        <div id="pericias" class="secoes_bloco2">
-            Perícias:
+        <div id="pericias" class="secoes_bloco2">Perícias:<select id="selecionarPericias">
+                <option value="todos" selected>Todos</option>
+                <option value="nt">Não treinado</option>
+                <option value="t">Treinado</option>
+                <option value="v">Veterano</option>
+                <option value="e">Expert</option>
+            </select>
             <textarea id="text_pericias" class="text_area" readonly cols="12">lorem ipsum</textarea>
+            <div id="rolar_dados">
+                <div>
+                    <input class="inp_rolar_dados" placeholder="Dados" id="num_dados">
+                    <input class="inp_rolar_dados" placeholder="Bônus" id="mod_dados"><br>
+                </div>
+                <button id="btn_rolar_dados">Rolar</button>
+            </div>
         </div>
 
         <div id="secao2">
@@ -87,8 +104,7 @@
 
             <div id="poderes" class="secoes_bloco2">
                 Poderes:
-                <div id="text_poderes" class="insert_content">lorem ipsum
-                </div>
+                <div id="text_poderes" class="insert_content">lorem ipsum</div>
             </div>
         </div>
         </div>
@@ -101,17 +117,7 @@
 
             <div id="infos" class="secoes_bloco2">
                 Info:
-                <textarea id="text_infos" class="text_area" readonly cols="12">Afinidade
-(infos)
-
-classe
-(infos)
-
-origem
-(infos)
-
-trilha
-(infos)</textarea>
+                <textarea id="text_infos" class="text_area" readonly cols="12">lorem ipsum</textarea>
             </div>
         </div>
         <div id="secao_anotacoes">

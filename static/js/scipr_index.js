@@ -13,12 +13,20 @@ const pe_modificar = $("#dano_pe")
 const sn_modificar = $("#dano_sn")
 const personagem = $("h1").text().replace("Ficha ", "").toLowerCase()
 const pericias = $("#text_pericias")
+const selecionarPericias = $("#selecionarPericias")
+var valorAtualSP = selecionarPericias.val()
 const rituais = $("#text_rituais")
 const poderes = $("#text_poderes")
 const inventario = $("#text_inventario")
 const anotacoes = $("#text_anotacoes")
 const infos = $("#text_infos")
 const divDesc = $("#text_desc")
+const numDados = $("#num_dados")
+const modificadorDados = $("#mod_dados")
+const btnDados = $("#btn_rolar_dados")
+const resultadoRD = $("#resultado_rd")
+const spanRRD1 = $("#span_rt_rd")
+const spanRRD2 = $("#span_num_rd")
 var pvModificar = 0
 var peModificar = 0
 var snModificar = 0
@@ -282,4 +290,129 @@ $("#btn_atualiza_inv").click(function() {
 
 $("#xdesc").on("click", function() {
     $("#descricao").css("visibility", "hidden")
+})
+
+$("#xrd").on("click", function() {
+    $("#resultado_rd").css("visibility", "hidden")
+})
+
+selecionarPericias.on("click", function() {
+    let atualizar = false
+
+    if (selecionarPericias.val() != valorAtualSP) {
+        atualizar = true
+    }
+    valorAtualSP = selecionarPericias.val()
+
+    if (atualizar) {
+        atualizaPericias()
+    }
+})
+
+function atualizaPericias() {
+    let todasPericias;
+    let periciasFormatado = ""
+    let niveisTreinamento = {"nt": 0, "t": 5, "v": 10, "e": 15}
+
+    $.ajax({
+        type: "POST",
+        data: JSON.stringify({"personagem": personagem}),
+        contentType: "application/json",
+        url: "https://apiordemparanormal.onrender.com/receber/pericias",
+        success: function(result) {
+            todasPericias = result
+            
+            if (valorAtualSP == "todos") {
+                for (pericia in todasPericias) {
+                    periciasFormatado += `${pericia[0].toUpperCase() + pericia.substring(1)} +${niveisTreinamento[todasPericias[pericia]]}\n`
+                }
+            } else {
+                for (pericia in todasPericias) {
+                    if (todasPericias[pericia] == valorAtualSP) {
+                        periciasFormatado += `${pericia[0].toUpperCase() + pericia.substring(1)} +${niveisTreinamento[todasPericias[pericia]]}\n`
+                    }
+                }
+            }
+
+            if (periciasFormatado == "") {
+                periciasFormatado = "Nenhuma"
+            }
+            
+            pericias.text(periciasFormatado)
+        }
+    })
+}
+
+btnDados.on("click", function() {
+    let dados = numDados.val()
+    let modificador = modificadorDados.val()
+    let ndados = dados
+    let nmodificador = modificador
+    let numeros = ["1","2","3","4","5","6","7","8","9","0"]
+
+    let iteravel;
+    for (iteravel in dados) {
+        if (numeros.indexOf(dados[iteravel]) == -1 && iteravel.toLocaleLowerCase != "d") {
+            ndados = ndados.replace(dados[iteravel], "")
+        }
+    }
+    for (iteravel in modificador) {
+        if (numeros.indexOf(modificador[iteravel]) == -1) {
+            nmodificador = nmodificador.replace(modificador[iteravel], "")
+        }
+    }
+
+    dados = ndados
+    modificador = nmodificador
+
+    console.log(dados, modificador)
+
+    if (dados != "") {
+        let ValorDoDado  = 20
+
+        if (dados.includes("d")) {
+            ValorDoDado = parseInt(dados.split("d")[1])
+            dados = dados.split("d")[0]
+        }    
+        
+        dados = parseInt(dados)
+
+        if (modificador != "") {
+            modificador = parseInt(modificador)
+        }else {
+            modificador = 0 
+        }
+
+        let valoresJogados = []
+        let desvantagem = false
+        let valorFinal;
+
+        if (dados <= -100) {
+            dados = 2
+            desvantagem = true
+
+        }else if (dados <= 0) {
+            dados = parseInt(dados) + 2
+            desvantagem = true
+
+        }else if (dados > 100) {
+            dados = 1
+        }
+
+        for (let i = 0; i < dados; i++) {
+            let jogada = Math.floor(Math.random() * ValorDoDado) + 1
+            valoresJogados.push(jogada)
+        }
+
+        if (desvantagem) {
+            valorFinal = Math.min(...valoresJogados) + modificador
+        }else {
+            valorFinal = Math.max(...valoresJogados) + modificador
+        }
+        
+        spanRRD1.text(`Resultado: ${valorFinal}`)
+        spanRRD2.text(`Dados jogados: ${dados}`)
+
+        resultadoRD.css("visibility", "visible")
+    }
 })
