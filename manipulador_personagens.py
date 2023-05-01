@@ -51,10 +51,7 @@ class Personagem:
             self.numero_de_poderes_de_energia_possuidos = 0
             self.numero_de_poderes_de_morte_possuidos = 0
             self.numero_de_poderes_de_sangue_possuidos = 0
-            self.pode_aprender_rituais_de_primeiro_circulo = True
-            self.pode_aprender_rituais_de_segundo_circulo = False
-            self.pode_aprender_rituais_de_terceiro_circulo = False
-            self.pode_aprender_rituais_de_quarto_circulo = False
+            self.circulo_ritual_maximo = 1
             self.nivel_de_treinamento_em_pericia_maximo = "treinado"
             self.xp = 0
 
@@ -115,10 +112,7 @@ class Personagem:
 
             self.xp = dados["xp"]
 
-            self.pode_aprender_rituais_de_primeiro_circulo = True
-            self.pode_aprender_rituais_de_segundo_circulo = False
-            self.pode_aprender_rituais_de_terceiro_circulo = False
-            self.pode_aprender_rituais_de_quarto_circulo = False
+            self.circulo_ritual_maximo = 1
 
             self.pv_extra = 0
             self.pe_extra = 0
@@ -252,7 +246,7 @@ class Personagem:
                             "atleta": ["acrobacia", "atletismo", "110%"],
                             "chef": ["fortitude", "prodissão", "ingrediente secreto"],
                             "criminoso": ["crime", "furtividade", "o crime compensa"],
-                            "cultista arrependido": ["ocultimo", "religião", "traços do outro lado"],
+                            "cultista arrependido": ["ocultismo", "religião", "traços do outro lado"],
                             "desgarrado": ["fortitude", "sobrevivência", "calejado"],
                             "engenheiro": ["profissão", "tecnologia", "ferramentas favoritas"],
                             "executivo": ["diplomacia", "profissão", "processo otimizado"],
@@ -337,7 +331,10 @@ class Personagem:
                 for pericia in pericias:
                     if pericia not in self.pericias_treinadas:
                         self.pericias_treinadas[pericia] = "treinado"
+                        print("entrou no if ", pericia, self.pericias_treinadas)
                     else:
+                        print("entrou no else")
+
                         nivel_treinamento = self.pericias_treinadas[pericia]
 
                         if nivel_treinamento == "expert":
@@ -349,7 +346,11 @@ class Personagem:
                             else:
                                 print("*UMA PERÍCIA NÃO FOI UPADO DEVIDO AO SEU NÍVEL DE TREINAMENTO JÁ SER O MÁXIMO --PERMITIDO--")
                         else:
-                            if niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo] >= niveis_de_treinamento[nivel_treinamento]:
+                            print("bool ", niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo] >= niveis_de_treinamento[nivel_treinamento])
+                            print("maximo ", niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo], self.nivel_de_treinamento_em_pericia_maximo)
+                            print("nivel pericia ", niveis_de_treinamento[nivel_treinamento], nivel_treinamento)
+
+                            if niveis_de_treinamento[self.nivel_de_treinamento_em_pericia_maximo] > niveis_de_treinamento[nivel_treinamento]:
                                 self.pericias_treinadas[pericia] = "veterano"
                             else:
                                 self.treina_pericias(1)
@@ -1166,7 +1167,9 @@ class Personagem:
 
                 for ritual in todos_os_rituais:
                     if ritual not in self.rituais:
-                        todos_os_rituais_para_escolher.append(ritual)
+                        circulo = int(todos_os_rituais[ritual][0][0])
+                        if circulo <= self.circulo_ritual_maximo:
+                            todos_os_rituais_para_escolher.append(ritual)
 
                 todos_os_rituais_para_escolher = tuple(todos_os_rituais_para_escolher)
 
@@ -1356,21 +1359,21 @@ class Personagem:
             self.nivel_de_treinamento_em_pericia_maximo = "treinado"
 
     def atualiza_circulo_maximo(self):
-        if self.classe == "combatente" or self.classe == "especialista":
-            if self.nivel_de_exposicao >= 75 and not self.pode_aprender_rituais_de_segundo_circulo:
-                self.pode_aprender_rituais_de_terceiro_circulo = True
+        if self.classe != "ocultista":
+            if self.nivel_de_exposicao >= 75:
+                self.circulo_ritual_maximo = 3
 
-            elif self.nivel_de_exposicao >= 45 and not self.pode_aprender_rituais_de_terceiro_circulo:
-                self.pode_aprender_rituais_de_segundo_circulo = True
+            elif self.nivel_de_exposicao >= 45:
+                self.circulo_ritual_maximo = 2
         else:
             if self.nivel_de_exposicao >= 85:
-                self.pode_aprender_rituais_de_quarto_circulo = True
+                self.circulo_ritual_maximo = 4
 
             elif self.nivel_de_exposicao >= 55:
-                self.pode_aprender_rituais_de_terceiro_circulo = True
+                self.circulo_ritual_maximo = 3
 
             elif self.nivel_de_exposicao >= 25:
-                self.pode_aprender_rituais_de_segundo_circulo = True
+                self.circulo_ritual_maximo = 2
 
     def atualiza_banco_de_dados(self):
         pericias_formatado = self.formata_pericias()
@@ -1439,9 +1442,5 @@ class Personagem:
 
             requests.patch(f"{self.banco_dados}/personagens/{self.nome}/.json", data=json.dumps(dados))
 
-
-# treinamento de pericias - medicina
-
-# personagem = Personagem(nome, bool(é novo?)
-# personagem.aumenta_nivel_de_exposicao() SE JÁ EXISTIR
-
+# personagem = Personagem(nome)
+# personagem.aumenta_nivel_de_exposicao()

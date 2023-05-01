@@ -296,18 +296,7 @@ $("#xrd").on("click", function() {
     $("#resultado_rd").css("visibility", "hidden")
 })
 
-selecionarPericias.on("click", function() {
-    let atualizar = false
 
-    if (selecionarPericias.val() != valorAtualSP) {
-        atualizar = true
-    }
-    valorAtualSP = selecionarPericias.val()
-
-    if (atualizar) {
-        atualizaPericias()
-    }
-})
 
 function atualizaPericias() {
     let todasPericias;
