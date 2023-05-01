@@ -5,6 +5,7 @@
     <title>Ficha {{ nome }}</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index-css.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='simbolomedo.png') }}">
     <script src="{{ url_for('static', filename='js/scipr_index.js') }}" defer></script>
 </head>
 <body>
@@ -39,11 +40,11 @@
 
     <div id="atributos">
         <div id="atributos_texto">
-            <div id="for">1</div>
-            <div id="pre">1</div>
-            <div id="agi">1</div>
-            <div id="vig">1</div>
-            <div id="int">1</div>
+            <div id="for" class="atb">1</div>
+            <div id="pre" class="atb">1</div>
+            <div id="agi" class="atb">1</div>
+            <div id="vig" class="atb">1</div>
+            <div id="int" class="atb">1</div>
         </div>
         <img draggable="false" id="roda_atb" src="{{ url_for('static', filename='ATRIVUTOS.png') }}">
     </div>

@@ -343,16 +343,16 @@ function atualizaPericias() {
     })
 }
 
-btnDados.on("click", function() {
-    let dados = numDados.val()
-    let modificador = modificadorDados.val()
+function rolarDados(valD, valM) {
+    let dados = valD
+    let modificador = valM
     let ndados = dados
     let nmodificador = modificador
     let numeros = ["1","2","3","4","5","6","7","8","9","0"]
 
     let iteravel;
     for (iteravel in dados) {
-        if (numeros.indexOf(dados[iteravel]) == -1 && iteravel.toLocaleLowerCase != "d") {
+        if (numeros.indexOf(dados[iteravel]) == -1 && dados[iteravel].toLowerCase() != "d") {
             ndados = ndados.replace(dados[iteravel], "")
         }
     }
@@ -365,14 +365,13 @@ btnDados.on("click", function() {
     dados = ndados
     modificador = nmodificador
 
-    console.log(dados, modificador)
-
     if (dados != "") {
         let ValorDoDado  = 20
 
         if (dados.includes("d")) {
             ValorDoDado = parseInt(dados.split("d")[1])
             dados = dados.split("d")[0]
+            console.log(dados, modificador)
         }    
         
         dados = parseInt(dados)
@@ -415,4 +414,12 @@ btnDados.on("click", function() {
 
         resultadoRD.css("visibility", "visible")
     }
+}
+
+btnDados.on("click", function() {
+    rolarDados(numDados.val(), modificadorDados.val())
+})
+
+$(".atb").on("click", function() {
+    rolarDados(this.innerHTML, "")
 })
